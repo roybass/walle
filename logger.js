@@ -5,7 +5,7 @@ const prettyStdOut = new PrettyStream();
 prettyStdOut.pipe(process.stdout);
 
 module.exports = bunyan.createLogger({
-  name: 'momoney',
+  name: 'walle',
   streams: [{
     level: 'debug',
     type: 'raw',
