@@ -1,6 +1,6 @@
 const numeral = require('numeral');
 const trade = require('./crest/trade');
-const crest = require('./crest/crest');
+const regions = require('./static/regions');
 const logger = require('./logger');
 const EVEoj = require("EVEoj");
 const SDD = EVEoj.SDD.Create("json", { path: "SDD_Ascension_201611140" });
@@ -8,9 +8,9 @@ const SDD = EVEoj.SDD.Create("json", { path: "SDD_Ascension_201611140" });
 const constraints = {
   maxCash: 15000000, // Max available cash for trading
   maxJumps: 30, // Max jumps
-  maxCapacity: 5000, // Cubic meters avaiable for hauling
+  maxCapacity: 5000, // Cubic meters available for hauling
   minProfit: 5000, // Minimum profit per trade (units * price diff)
-  regions: [10000042, 10000002, 10000043]
+  regions: ['The Forge', 'Domain', 'Metropolis'].map(regions.getId) // Region Ids included in the search
 };
 
 
