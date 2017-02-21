@@ -55,10 +55,7 @@ SDD.LoadMeta()
       }
     }
     bestRtTrades.sort((t1, t2) => t1.sellOrder.stationID - t2.sellOrder.stationID);
-    logger.info('Best Round Trip has profit : %d. Trades:', bestRtProfit);
-    for (const trade of bestRtTrades) {
-      //logger.info('%s', JSON.stringify(formatTrade(trade), null, ' '));
-    }
+    logger.info('Best Round Trip has profit : %d.', bestRtProfit);
   });
 
 function formatTrade(t) {
@@ -79,8 +76,8 @@ function formatTrade(t) {
     },
     profit: numeral(t.profit).format('0,0'),
     profitPerJump: (Math.floor(t.profit / t.jumps)),
-    availableUnits: t.availableUnits,
+    units: t.tradeUnits,
     jumps: t.jumps,
-    totalVolume: t.item ? t.availableUnits * t.item.volume : 'N/A'
+    totalVolume: t.item ? t.tradeUnits * t.item.volume : 'N/A'
   };
 }

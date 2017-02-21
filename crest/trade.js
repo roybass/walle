@@ -71,6 +71,9 @@ class TradeFinder {
       if (bestSellOrder.price >= bestBuyOrder.price) {
         continue;
       }
+      if (bestSellOrder > constraints.maxCash) {
+        continue; // Too expensive.
+      }
 
       let maxProfit = 0;
       let maxProfitTrade = null;
@@ -82,18 +85,26 @@ class TradeFinder {
             continue;
           }
           const maxUnits = Math.floor(constraints.maxCapacity / type.volume);
-          const availableUnits = Math.min(buyOrder.volume, sellOrder.volume, maxUnits);
+          const minUnits = Math.max(buyOrder.minVolume, sellOrder.minVolume); // The higher min-volume wins
+          if (maxUnits < minUnits) {
+            continue; // Not enough capacity for this deal
+          }
+          const availableUnits = Math.min(buyOrder.volume, sellOrder.volume);
+          if (availableUnits < minUnits) {
+            continue;
+          }
+          const tradeUnits = Math.min(availableUnits, maxUnits);
 
-          const profit = availableUnits * priceDiff;
+          const profit = tradeUnits * priceDiff;
           if (profit < constraints.minProfit) {
             continue;
           }
-          if (sellOrder.price * availableUnits > constraints.maxCash) {
+          if (sellOrder.price * tradeUnits > constraints.maxCash) {
             continue;
           }
           if (profit > maxProfit) {
             maxProfit = profit;
-            maxProfitTrade = { buyOrder, sellOrder, profit, availableUnits, item: type };
+            maxProfitTrade = { buyOrder, sellOrder, profit, tradeUnits, item: type };
           }
         }
       }
@@ -126,6 +137,10 @@ class TradeFinder {
       }
     }
   }
+
+  clamp(num, min, max) {
+    return num <= min ? min : num >= max ? max : num;
+  }
 }
 
 
@@ -136,7 +151,7 @@ class ConstraintsFilter {
 
   apply(trade) {
     // Max Cash
-    const neededCash = trade.availableUnits * trade.sellOrder.price;
+    const neededCash = trade.tradeUnits * trade.sellOrder.price;
     if (neededCash > this.constraints.maxCash) {
       logger.info('Filtering trade with high cash : %d (profit=%d)', neededCash, trade.profit);
       return false;
@@ -153,7 +168,7 @@ class ConstraintsFilter {
       logger.info('Filtering trade because item is not available: %j', trade.type);
       return false;
     }
-    const neededCapacity = trade.availableUnits * trade.item.volume;
+    const neededCapacity = trade.tradeUnits * trade.item.volume;
     if (neededCapacity > this.constraints.maxCapacity) {
       logger.info('Filtering trade with high capacity : %d (profit=%d)', neededCapacity, trade.profit);
       return false;
