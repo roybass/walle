@@ -5,7 +5,7 @@ const stations = require('../static/stations');
 
 class TradeFinder {
 
-  findTradesInRegions(constraints) {
+  findTradesInRegions(constraints, routesCalculator) {
     const orderPromises = [];
     for (const regionId of constraints.regions) {
       let p = crest.getAllMarketOrders(regionId);
@@ -23,7 +23,7 @@ class TradeFinder {
       logger.debug("Added sell orders for %d types", sellOrders.size);
       logger.debug("Added buy orders for %d types", buyOrders.size);
       return sde.types().then((types) => {
-        return this.findTrades(buyOrders, sellOrders, constraints, types);
+        return this.findTrades(buyOrders, sellOrders, constraints, types, routesCalculator);
       });
 
     });
@@ -50,7 +50,7 @@ class TradeFinder {
     ordersArr.push(order);
   }
 
-  findTrades(buyOrders, sellOrders, constraints, types) {
+  findTrades(buyOrders, sellOrders, constraints, types, routesCalculator) {
     const trades = [];
     for (const buyEntry of buyOrders) {
       const typeId = buyEntry[0];
@@ -112,7 +112,7 @@ class TradeFinder {
         trades.push(maxProfitTrade);
       }
     }
-    this.addTradesMetaData(trades);
+    this.addTradesMetaData(trades, routesCalculator);
     const constraintsFilter = new ConstraintsFilter(constraints);
     const allowedTrades = trades.filter((e) => constraintsFilter.apply(e));
     allowedTrades.sort((left, right) => right.profit - left.profit);
@@ -120,7 +120,7 @@ class TradeFinder {
 
   }
 
-  addTradesMetaData(trades) {
+  addTradesMetaData(trades, routesCalculator) {
     logger.info('Adding metadata to %d trades', trades.length);
     for (const trade of trades) {
       const buyOrderStation = stations[trade.buyOrder.stationID];
@@ -130,9 +130,7 @@ class TradeFinder {
       trade.sellOrder.station = sellOrderStation ? sellOrderStation.stationName : 'N/A';
 
       if (buyOrderStation && sellOrderStation) {
-        let fromSystem = map.GetSystem({ name: sellOrderStation.systemName });
-        let toSystem = map.GetSystem({ name: buyOrderStation.systemName });
-        trade.route = map.Route(fromSystem.ID, toSystem.ID, [], true, false);
+        trade.route = routesCalculator.getRoute(sellOrderStation.systemId, buyOrderStation.systemId, true);
         trade.jumps = trade.route.length;
       }
     }

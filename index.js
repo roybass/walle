@@ -1,9 +1,8 @@
 const numeral = require('numeral');
 const trade = require('./crest/trade');
 const regions = require('./static/regions');
+const routesCalc = require('./crest/route_calculator');
 const logger = require('./logger');
-const EVEoj = require("EVEoj");
-const SDD = EVEoj.SDD.Create("json", { path: "SDD_Ascension_201611140" });
 
 const constraints = {
   maxCash: 15000000, // Max available cash for trading
@@ -14,14 +13,11 @@ const constraints = {
 };
 
 
-SDD.LoadMeta()
-  .then(() => {
-    map = EVEoj.map.Create(SDD, "K");
-    return map.Load();
-  })
-  .then(() => {
+
+routesCalc.init()
+  .then((routesCalculator) => {
     logger.info('Fetching orders for regions ', constraints.regions);
-    return trade.findTradesInRegions(constraints);
+    return trade.findTradesInRegions(constraints, routesCalculator);
   })
   .then((trades) => {
     logger.info('Found %d good trades', trades.length);
