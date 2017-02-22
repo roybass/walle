@@ -3,6 +3,7 @@ const sde = require('eve-online-sde');
 const logger = require('../logger');
 const stations = require('../static/stations');
 
+const pairs = new Set();
 class TradeFinder {
 
   findTradesInRegions(constraints, routesCalculator) {
@@ -65,24 +66,27 @@ class TradeFinder {
       }
       const sellOrdersArr = sellOrders.get(typeId);
 
-      const bestBuyOrder = buyOrdersArr.reduce((maxOrder, order) => order.price > maxOrder.price ? order : maxOrder, buyOrdersArr[0]);
-      const bestSellOrder = sellOrdersArr.reduce((minOrder, order) => order.price < minOrder.price ? order : minOrder, sellOrdersArr[0]);
+      buyOrdersArr.sort((left, right) => right.price - left.price);
+      sellOrdersArr.sort((left, right) => left.price - right.price);
 
-      if (bestSellOrder.price >= bestBuyOrder.price) {
-        continue;
+      if (sellOrdersArr[0].price >= buyOrdersArr[0].price) {
+        continue; // Best sell order is smaller than best buy order - forget about this type
       }
-      if (bestSellOrder > constraints.maxCash) {
+      if (sellOrdersArr[0] > constraints.maxCash) {
         continue; // Too expensive.
       }
 
       let maxProfit = 0;
       let maxProfitTrade = null;
 
-      for (const buyOrder of buyOrdersArr) {
-        for (const sellOrder of sellOrdersArr) {
+      for (const sellOrder of sellOrdersArr) {
+        if (sellOrder.price > buyOrdersArr[0]) {
+          break; // No point in checking anymore pairs - we reached a point where seller price is higher than buyer price
+        }
+        for (const buyOrder of buyOrdersArr) {
           const priceDiff = buyOrder.price - sellOrder.price;
           if (priceDiff <= 0) {
-            continue;
+            break;
           }
           const maxUnits = Math.floor(constraints.maxCapacity / type.volume);
           const minUnits = Math.max(buyOrder.minVolume, sellOrder.minVolume); // The higher min-volume wins
@@ -102,6 +106,17 @@ class TradeFinder {
           if (sellOrder.price * tradeUnits > constraints.maxCash) {
             continue;
           }
+          pairs.add(buyOrder.stationID + '_' + sellOrder.stationID);
+
+          const buyOrderStation = stations[buyOrder.stationID];
+          const sellOrderStation = stations[sellOrder.stationID];
+
+          if (buyOrderStation && sellOrderStation) {
+            const route = routesCalculator.getRoute(sellOrderStation.systemId, buyOrderStation.systemId, true);
+            if (route.length > constraints.maxJumps) {
+              continue;
+            }
+          }
           if (profit > maxProfit) {
             maxProfit = profit;
             maxProfitTrade = { buyOrder, sellOrder, profit, tradeUnits, item: type };
@@ -112,6 +127,7 @@ class TradeFinder {
         trades.push(maxProfitTrade);
       }
     }
+    logger.info('%d station pairs', pairs.size);
     this.addTradesMetaData(trades, routesCalculator);
     const constraintsFilter = new ConstraintsFilter(constraints);
     const allowedTrades = trades.filter((e) => constraintsFilter.apply(e));

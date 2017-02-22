@@ -17,15 +17,15 @@ function init() {
 class RouteCalculatorWithCache {
 
   constructor(map) {
-    this.cache = new NodeCache();
+    this.cache = new NodeCache({ stdTTL: 60 * 60 * 1000, checkperiod: 60 * 60 * 1000 });
     this.map = map;
   }
 
-  getRoute(fromStationId, toStationId, avoidLowSec) {
-    const key = fromStationId + '_' + toStationId + '_' + avoidLowSec;
+  getRoute(fromSystemId, toSystemId, avoidLowSec) {
+    const key = fromSystemId + '_' + toSystemId + '_' + avoidLowSec;
     let route = this.cache.get(key);
     if (!route) {
-      route = this._calcRoute(fromStationId, toStationId, avoidLowSec);
+      route = this._calcRoute(fromSystemId, toSystemId, avoidLowSec);
       this.cache.set(key, route);
     }
     return route
