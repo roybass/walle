@@ -83,7 +83,19 @@ class TradeFinder {
         if (sellOrder.price > buyOrdersArr[0]) {
           break; // No point in checking anymore pairs - we reached a point where seller price is higher than buyer price
         }
+        const sellOrderStation = stations[sellOrder.stationID];
+        if (!sellOrderStation) {
+          continue; // No station, we can't calculate distance etc.
+        }
+        if (constraints.fromSystems && this.findSystem(constraints, sellOrderStation.systemId) == null) {
+          continue; // We have a 'from system' constraint and it doesn't match
+        }
         for (const buyOrder of buyOrdersArr) {
+          const buyOrderStation = stations[buyOrder.stationID];
+          if (!buyOrderStation) {
+            continue; // No station, we can't calculate distance etc.
+          }
+
           const priceDiff = buyOrder.price - sellOrder.price;
           if (priceDiff <= 0) {
             break;
@@ -107,16 +119,11 @@ class TradeFinder {
             continue;
           }
           pairs.add(buyOrder.stationID + '_' + sellOrder.stationID);
-
-          const buyOrderStation = stations[buyOrder.stationID];
-          const sellOrderStation = stations[sellOrder.stationID];
-
-          if (buyOrderStation && sellOrderStation) {
-            const route = routesCalculator.getRoute(sellOrderStation.systemId, buyOrderStation.systemId, true);
-            if (route.length > constraints.maxJumps) {
-              continue;
-            }
+          const route = routesCalculator.getRoute(sellOrderStation.systemId, buyOrderStation.systemId, true);
+          if (route.length > constraints.maxJumps) {
+            continue;
           }
+
           if (profit > maxProfit) {
             maxProfit = profit;
             maxProfitTrade = { buyOrder, sellOrder, profit, tradeUnits, item: type };
@@ -152,9 +159,15 @@ class TradeFinder {
     }
   }
 
-  clamp(num, min, max) {
-    return num <= min ? min : num >= max ? max : num;
+  findSystem(constraints, filterSystem) {
+    for (const system of constraints.fromSystems) {
+      if (system === filterSystem) {
+        return system;
+      }
+    }
+    return null;
   }
+
 }
 
 

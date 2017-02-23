@@ -1,6 +1,7 @@
 const numeral = require('numeral');
 const trade = require('./crest/trade');
 const regions = require('./static/regions');
+const systems = require('./static/systems');
 const routesCalc = require('./crest/route_calculator');
 const logger = require('./logger');
 
@@ -8,10 +9,10 @@ const constraints = {
   maxCash: 15000000, // Max available cash for trading
   maxJumps: 30, // Max jumps
   maxCapacity: 5000, // Cubic meters available for hauling
-  minProfit: 5000, // Minimum profit per trade (units * price diff)
-  regions: ['The Forge', 'Domain', 'Metropolis'].map(regions.getId) // Region Ids included in the search
+  minProfit: 500000, // Minimum profit per trade (units * price diff)
+  regions: ['Heimatar', 'Metropolis', 'Molden Heath', 'Derelik'].map(regions.getId)// Region Ids included in the search
+  //fromSystems: ['Ryddinjorn', 'Rens'].map(systems.nameToId)
 };
-
 
 
 routesCalc.init()
@@ -26,35 +27,12 @@ routesCalc.init()
     for (let i = 0; i < 10; i++) {
       logger.info('Trade %d: %s', i, JSON.stringify(formatTrade(trades[i]), null, ' '));
     }
-
-    // Now let's find the best Round-Trip: (pairs of stations with accumulated profit)
-    const rtTrades = new Map();
-    for (const trade of trades) {
-      const keyComponents = [trade.buyOrder.stationID, trade.sellOrder.stationID];
-      keyComponents.sort();
-      const key = keyComponents.join('_');
-      let rtTradesArr = rtTrades.get(key);
-      if (!rtTradesArr) {
-        rtTradesArr = [];
-        rtTrades.set(key, rtTradesArr);
-      }
-      rtTradesArr.push(trade);
-    }
-
-    let bestRtProfit = 0;
-    let bestRtTrades = null;
-    for (const rtTradesArr of rtTrades.values()) {
-      const totalProfit = rtTradesArr.reduce((sum, trade) => sum + trade.profit, 0);
-      if (totalProfit > bestRtProfit) {
-        bestRtProfit = totalProfit;
-        bestRtTrades = rtTradesArr;
-      }
-    }
-    bestRtTrades.sort((t1, t2) => t1.sellOrder.stationID - t2.sellOrder.stationID);
-    logger.info('Best Round Trip has profit : %d.', bestRtProfit);
   });
 
 function formatTrade(t) {
+  if (t === undefined) {
+    return {};
+  }
   return {
     buy: {
       price: t.sellOrder.price,
