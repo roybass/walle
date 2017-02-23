@@ -7,10 +7,10 @@ const logger = require('./logger');
 
 const constraints = {
   maxCash: 15000000, // Max available cash for trading
-  maxJumps: 15, // Max jumps
+  maxJumps: 30, // Max jumps
   maxCapacity: 5000, // Cubic meters available for hauling
   minProfit: 100000, // Minimum profit per trade (units * price diff)
-  regions: ['Heimatar', 'Metropolis', 'Molden Heath', 'Derelik'].map(regions.getId), // Region Ids included in the search
+  regions: ['Heimatar', 'Metropolis', 'Molden Heath', 'Derelik', 'The Forge'].map(regions.getId), // Region Ids included in the search
   fromSystems: ['Hek'].map(systems.nameToId),
   fromSystemRadius: 3, // Not implemented. Radius (in jumps) from the 'fromSystems' array.
   minSecurity: -1 // Minimum security status of from/to system.
@@ -51,10 +51,10 @@ function formatTrade(t) {
       volume: t.type.volume
     },
     profit: numeral(t.profit).format('0,0'),
-    profitPerJump: (Math.floor(t.profit / t.jumps)),
+    profitPerJump: numeral((Math.floor(t.profit / t.jumps))).format('0,0'),
     profitPercent: numeral(t.profit / (t.tradeUnits * t.sellOrder.price)).format('0.00%'),
     units: t.tradeUnits,
     jumps: t.jumps,
-    totalVolume: t.item ? t.tradeUnits * t.item.volume : 'N/A'
+    totalVolume: t.type ? t.tradeUnits * t.type.volume : 'N/A'
   };
 }
