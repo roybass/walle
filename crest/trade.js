@@ -2,6 +2,7 @@ const crest = require('./crest');
 const sde = require('eve-online-sde');
 const logger = require('../logger');
 const stations = require('../static/stations');
+const systems = require('../static/systems');
 
 const pairs = new Set();
 class TradeFinder {
@@ -57,7 +58,6 @@ class TradeFinder {
       const typeId = buyEntry[0];
       const type = types[typeId];
       if (!type) {
-        logger.warn('Unknown type %d', typeId);
         continue;
       }
       const buyOrdersArr = buyEntry[1];
@@ -83,19 +83,24 @@ class TradeFinder {
         if (sellOrder.price > buyOrdersArr[0]) {
           break; // No point in checking anymore pairs - we reached a point where seller price is higher than buyer price
         }
-        const sellOrderStation = stations[sellOrder.stationID];
-        if (!sellOrderStation) {
+        sellOrder.station = this.getStationInfo(sellOrder.stationID);
+        if (!sellOrder.station) {
           continue; // No station, we can't calculate distance etc.
         }
-        if (constraints.fromSystems && this.findSystem(constraints, sellOrderStation.systemId) == null) {
+        if (sellOrder.station.security < constraints.minSecurity) {
+          continue; // Too dangerous...
+        }
+        if (constraints.fromSystems && this.findSystem(constraints, sellOrder.station.systemId) == null) {
           continue; // We have a 'from system' constraint and it doesn't match
         }
         for (const buyOrder of buyOrdersArr) {
-          const buyOrderStation = stations[buyOrder.stationID];
-          if (!buyOrderStation) {
+          buyOrder.station = this.getStationInfo(buyOrder.stationID);
+          if (!buyOrder.station) {
             continue; // No station, we can't calculate distance etc.
           }
-
+          if (buyOrder.station.security < constraints.minSecurity) {
+            continue; // Too dangerous..
+          }
           const priceDiff = buyOrder.price - sellOrder.price;
           if (priceDiff <= 0) {
             break;
@@ -119,14 +124,15 @@ class TradeFinder {
             continue;
           }
           pairs.add(buyOrder.stationID + '_' + sellOrder.stationID);
-          const route = routesCalculator.getRoute(sellOrderStation.systemId, buyOrderStation.systemId, true);
+          const route = routesCalculator.getRoute(sellOrder.station.systemId, buyOrder.station.systemId, true);
           if (route.length > constraints.maxJumps) {
             continue;
           }
+          const jumps = route.length;
 
           if (profit > maxProfit) {
             maxProfit = profit;
-            maxProfitTrade = { buyOrder, sellOrder, profit, tradeUnits, item: type };
+            maxProfitTrade = { profit, buyOrder, sellOrder, tradeUnits, route, jumps, type };
           }
         }
       }
@@ -135,28 +141,9 @@ class TradeFinder {
       }
     }
     logger.info('%d station pairs', pairs.size);
-    this.addTradesMetaData(trades, routesCalculator);
-    const constraintsFilter = new ConstraintsFilter(constraints);
-    const allowedTrades = trades.filter((e) => constraintsFilter.apply(e));
-    allowedTrades.sort((left, right) => right.profit - left.profit);
-    return allowedTrades;
+    trades.sort((left, right) => right.profit - left.profit);
+    return trades;
 
-  }
-
-  addTradesMetaData(trades, routesCalculator) {
-    logger.info('Adding metadata to %d trades', trades.length);
-    for (const trade of trades) {
-      const buyOrderStation = stations[trade.buyOrder.stationID];
-      const sellOrderStation = stations[trade.sellOrder.stationID];
-
-      trade.buyOrder.station = buyOrderStation ? buyOrderStation.stationName : 'N/A';
-      trade.sellOrder.station = sellOrderStation ? sellOrderStation.stationName : 'N/A';
-
-      if (buyOrderStation && sellOrderStation) {
-        trade.route = routesCalculator.getRoute(sellOrderStation.systemId, buyOrderStation.systemId, true);
-        trade.jumps = trade.route.length;
-      }
-    }
   }
 
   findSystem(constraints, filterSystem) {
@@ -168,40 +155,24 @@ class TradeFinder {
     return null;
   }
 
-}
-
-
-class ConstraintsFilter {
-  constructor(constraints = {}) {
-    this.constraints = constraints;
-  }
-
-  apply(trade) {
-    // Max Cash
-    const neededCash = trade.tradeUnits * trade.sellOrder.price;
-    if (neededCash > this.constraints.maxCash) {
-      logger.info('Filtering trade with high cash : %d (profit=%d)', neededCash, trade.profit);
-      return false;
+  getStationInfo(stationID) {
+    let station = stations[stationID];
+    if (!station) {
+      return null;
     }
+    const stationInfo = {
+      name: station.stationName,
+      region: station.regionName,
+      system: station.systemName,
+      systemId: station.systemId
+    };
 
-    // Max jumps
-    if (trade.jumps > this.constraints.maxJumps) {
-      logger.info('Filtering trade with high jumps : %d (profit=%d)', trade.jumps, trade.profit);
-      return false
+    let system = systems.findById(station.systemId);
+    if (system) {
+      stationInfo.security = system.security;
     }
-
-    // Max capacity
-    if (!trade.item) {
-      logger.info('Filtering trade because item is not available: %j', trade.type);
-      return false;
-    }
-    const neededCapacity = trade.tradeUnits * trade.item.volume;
-    if (neededCapacity > this.constraints.maxCapacity) {
-      logger.info('Filtering trade with high capacity : %d (profit=%d)', neededCapacity, trade.profit);
-      return false;
-    }
-
-    return true;
+    return stationInfo;
   }
 }
+
 module.exports = new TradeFinder();

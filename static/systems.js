@@ -7956,6 +7956,10 @@ function nameToId(name) {
   else return -1;
 }
 
+function findById(id) {
+  return idToStation[id];
+}
 module.exports = {
+  findById,
   nameToId
 };

@@ -7,11 +7,13 @@ const logger = require('./logger');
 
 const constraints = {
   maxCash: 15000000, // Max available cash for trading
-  maxJumps: 30, // Max jumps
+  maxJumps: 15, // Max jumps
   maxCapacity: 5000, // Cubic meters available for hauling
-  minProfit: 500000, // Minimum profit per trade (units * price diff)
-  regions: ['Heimatar', 'Metropolis', 'Molden Heath', 'Derelik'].map(regions.getId)// Region Ids included in the search
-  //fromSystems: ['Ryddinjorn', 'Rens'].map(systems.nameToId)
+  minProfit: 100000, // Minimum profit per trade (units * price diff)
+  regions: ['Heimatar', 'Metropolis', 'Molden Heath', 'Derelik'].map(regions.getId), // Region Ids included in the search
+  fromSystems: ['Hek'].map(systems.nameToId),
+  fromSystemRadius: 3, // Not implemented. Radius (in jumps) from the 'fromSystems' array.
+  minSecurity: -1 // Minimum security status of from/to system.
 };
 
 
@@ -35,21 +37,22 @@ function formatTrade(t) {
   }
   return {
     buy: {
-      price: t.sellOrder.price,
+      price: numeral(t.sellOrder.price).format('0,0'),
       units: t.sellOrder.volume,
       station: t.sellOrder.station
     },
     sell: {
-      price: t.buyOrder.price,
+      price: numeral(t.buyOrder.price).format('0,0'),
       units: t.buyOrder.volume,
       station: t.buyOrder.station
     },
-    type: !t.item ? 'N/A' : {
-      name: t.item.name.en,
-      volume: t.item.volume
+    type: !t.type ? 'N/A' : {
+      name: t.type.name.en,
+      volume: t.type.volume
     },
     profit: numeral(t.profit).format('0,0'),
     profitPerJump: (Math.floor(t.profit / t.jumps)),
+    profitPercent: numeral(t.profit / (t.tradeUnits * t.sellOrder.price)).format('0.00%'),
     units: t.tradeUnits,
     jumps: t.jumps,
     totalVolume: t.item ? t.tradeUnits * t.item.volume : 'N/A'
