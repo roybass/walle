@@ -132,7 +132,7 @@ class TradeFinder {
 
           if (profit > maxProfit) {
             maxProfit = profit;
-            maxProfitTrade = { profit, buyOrder, sellOrder, tradeUnits, route, jumps, type };
+            maxProfitTrade = { profit, buyOrder, sellOrder, tradeUnits, route, jumps, type, typeId };
           }
         }
       }

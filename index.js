@@ -1,26 +1,26 @@
 const numeral = require('numeral');
 const trade = require('./crest/trade');
 const regions = require('./static/regions');
-const systems = require('./static/systems');
 const routesCalc = require('./crest/route_calculator');
+const constraintsFactory = require('./crest/constraints_factory');
 const logger = require('./logger');
 
 const constraints = {
-  maxCash: 15000000, // Max available cash for trading
-  maxJumps: 30, // Max jumps
-  maxCapacity: 5000, // Cubic meters available for hauling
+  maxCash: 20000000, // Max available cash for trading
+  maxJumps: 10, // Max jumps
+  maxCapacity: 5500, // Cubic meters available for hauling
   minProfit: 100000, // Minimum profit per trade (units * price diff)
-  regions: ['Heimatar', 'Metropolis', 'Molden Heath', 'Derelik', 'The Forge'].map(regions.getId), // Region Ids included in the search
-  fromSystems: ['Hek'].map(systems.nameToId),
-  fromSystemRadius: 3, // Not implemented. Radius (in jumps) from the 'fromSystems' array.
-  minSecurity: -1 // Minimum security status of from/to system.
+  regions: ['Heimatar', 'Metropolis', 'Molden Heath', 'Derelik', 'The Forge', 'The Citadel', 'Lonetrek', 'Black Rise'], // Region Ids included in the search
+  fromSystems: ['Jita'],
+  fromSystemRadius: 1, // Radius (in jumps) from the 'fromSystems' array.
+  minSecurity: 0 // Minimum security status of from/to system.
 };
 
 
 routesCalc.init()
   .then((routesCalculator) => {
     logger.info('Fetching orders for regions ', constraints.regions);
-    return trade.findTradesInRegions(constraints, routesCalculator);
+    return trade.findTradesInRegions(constraintsFactory.prepareConstraints(constraints), routesCalculator);
   })
   .then((trades) => {
     logger.info('Found %d good trades', trades.length);
@@ -47,6 +47,7 @@ function formatTrade(t) {
       station: t.buyOrder.station
     },
     type: !t.type ? 'N/A' : {
+      id: t.typeId,
       name: t.type.name.en,
       volume: t.type.volume
     },
