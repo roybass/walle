@@ -11,7 +11,7 @@ const constraints = {
   maxCapacity: 510000, // Cubic meters available for hauling
   minProfit: 100000, // Minimum profit per trade (units * price diff)
   regions: ['Metropolis', 'Heimatar', 'Derelik', 'The Forge', 'Lonetrek', 'Black Rise', 'The Citadel'], // Region Ids included in the search
-  //fromSystems: ['Hek'],
+  fromSystems: ['Hek'],
   fromSystemRadius: 0, // Radius (in jumps) from the 'fromSystems' array.
   minSecurity: 0 // Minimum security status of from/to system.
 };
