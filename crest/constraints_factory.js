@@ -13,20 +13,29 @@ function prepareConstraints(constraints) {
   logger.info('Optimized contraints');
   const newConstraints = extend({}, constraints);
   newConstraints.regions = constraints.regions.map(regions.getId);
-  newConstraints.fromSystems = constraints.fromSystems.map(systems.nameToId);
+  if (constraints.fromSystems) {
+    newConstraints.fromSystems = constraints.fromSystems.map((name) => {
+      const id = systems.nameToId(name);
+      if (!id) {
+        throw Error('Unknown system ' + name);
+      }
+      return id;
+    });
 
-  // Expand radius jumps
-  let extendedSystems = new Set(newConstraints.fromSystems);
-  let newNeighbors = new Set(extendedSystems);
-  for (let i = 0; i < constraints.fromSystemRadius; i++) {
-    const neighbors = jumps.getNeighbors(newNeighbors);
-    newNeighbors = new Set([...neighbors].filter(x => !extendedSystems.has(x)));
-    extendedSystems = new Set([...extendedSystems, ...newNeighbors]);
-  }
+    // Expand radius jumps
+    let extendedSystems = new Set(newConstraints.fromSystems);
+    let newNeighbors = new Set(extendedSystems);
+    for (let i = 0; i < constraints.fromSystemRadius; i++) {
+      const neighbors = jumps.getNeighbors(newNeighbors);
+      newNeighbors = new Set([...neighbors].filter(x => !extendedSystems.has(x)));
+      extendedSystems = new Set([...extendedSystems, ...newNeighbors]);
+    }
 
-  newConstraints.fromSystems = extendedSystems;
-  for (let item of extendedSystems.values()) {
-    logger.debug('Start system: ' + systems.findById(item).systemName);
+    newConstraints.fromSystems = extendedSystems;
+    for (let item of extendedSystems.values()) {
+      logger.debug('Start system: ' + systems.findById(item).systemName);
+    }
+
   }
   return newConstraints;
 }
