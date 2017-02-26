@@ -54,6 +54,7 @@ class TradeFinder {
 
   findTrades(buyOrders, sellOrders, constraints, types, routesCalculator) {
     const trades = [];
+    let all = 0;
     for (const buyEntry of buyOrders) {
       const typeId = buyEntry[0];
       const type = types[typeId];
@@ -75,11 +76,11 @@ class TradeFinder {
       if (sellOrdersArr[0] > constraints.maxCash) {
         continue; // Too expensive.
       }
-
       let maxProfit = 0;
       let maxProfitTrade = null;
 
       for (const sellOrder of sellOrdersArr) {
+        all++;
         if (sellOrder.price > buyOrdersArr[0]) {
           break; // No point in checking anymore pairs - we reached a point where seller price is higher than buyer price
         }
@@ -90,7 +91,7 @@ class TradeFinder {
         if (sellOrder.station.security < constraints.minSecurity) {
           continue; // Too dangerous...
         }
-        if (constraints.fromSystems && this.findSystem(constraints, sellOrder.station.systemId) == null) {
+        if (constraints.fromSystems && !constraints.fromSystems.has(sellOrder.station.systemId)) {
           continue; // We have a 'from system' constraint and it doesn't match
         }
         for (const buyOrder of buyOrdersArr) {
@@ -140,19 +141,12 @@ class TradeFinder {
         trades.push(maxProfitTrade);
       }
     }
+    logger.info('Scanned %d possible trades', all);
     logger.info('%d station pairs', pairs.size);
     trades.sort((left, right) => right.profit - left.profit);
+
     return trades;
 
-  }
-
-  findSystem(constraints, filterSystem) {
-    for (const system of constraints.fromSystems) {
-      if (system === filterSystem) {
-        return system;
-      }
-    }
-    return null;
   }
 
   getStationInfo(stationID) {

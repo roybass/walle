@@ -7,12 +7,12 @@ const logger = require('./logger');
 
 const constraints = {
   maxCash: 20000000, // Max available cash for trading
-  maxJumps: 10, // Max jumps
-  maxCapacity: 5500, // Cubic meters available for hauling
+  maxJumps: 30, // Max jumps
+  maxCapacity: 510000, // Cubic meters available for hauling
   minProfit: 100000, // Minimum profit per trade (units * price diff)
-  regions: ['Heimatar', 'Metropolis', 'Molden Heath', 'Derelik', 'The Forge', 'The Citadel', 'Lonetrek', 'Black Rise'], // Region Ids included in the search
-  fromSystems: ['Jita'],
-  fromSystemRadius: 1, // Radius (in jumps) from the 'fromSystems' array.
+  regions: ['Metropolis', 'Heimatar', 'Derelik', 'The Forge', 'Lonetrek', 'Black Rise', 'The Citadel'], // Region Ids included in the search
+  //fromSystems: ['Hek'],
+  fromSystemRadius: 0, // Radius (in jumps) from the 'fromSystems' array.
   minSecurity: 0 // Minimum security status of from/to system.
 };
 
