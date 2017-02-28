@@ -6,43 +6,20 @@ const constraintsFactory = require('./crest/constraints_factory');
 const logger = require('./logger');
 const express = require('express');
 
-const defaultConstraints = {
-  maxCash: 30000000, // Max available cash for trading
-  maxJumps: 10, // Max jumps
-  maxCapacity: 5100, // Cubic meters available for hauling
-  minProfit: 100000, // Minimum profit per trade (units * price diff)
-  regions: 'Metropolis, Heimatar, Derelik, Molden Heath', // Region names included in the search
-  fromSystems: 'Rens',
-  fromSystemRadius: 2, // Radius (in jumps) from the 'fromSystems' array.
-  minSecurity: 0 // Minimum security status of from/to system.
-};
-
-
 const app = express();
 
 const port = 8080;
 
 routesCalc.init().then((routesCalculator) => {
 
-  app.get('/bestTrades', (req, res)  => {
-
-    const constraints = extend({}, defaultConstraints);
-    for (const key in defaultConstraints) {
-      if (!defaultConstraints.hasOwnProperty(key)) {
-        continue;
-      }
-      if (req.query[key]) {
-        constraints[key] = req.query[key];
-      }
-    }
-
-    trade.findTradesInRegions(constraintsFactory.prepareConstraints(constraints), routesCalculator)
+  app.get('/api/bestTrades', (req, res)  => {
+    trade.findTradesInRegions(constraintsFactory.getConstraints(req), routesCalculator)
       .then((routes) => {
         res.json(routes.map(formatTrade));
       });
-
   });
 
+  app.use('/', express.static('client'));
 
   app.listen(port, () => {
     logger.info('Server ready on port ' + port);

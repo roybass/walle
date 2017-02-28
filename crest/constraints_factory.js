@@ -4,6 +4,38 @@ const regions = require('../static/regions');
 const jumps = require('../static/jumps');
 const logger = require('../logger');
 
+const defaultConstraints = {
+  maxCash: 30000000, // Max available cash for trading
+  maxJumps: 10, // Max jumps
+  maxCapacity: 5100, // Cubic meters available for hauling
+  minProfit: 100000, // Minimum profit per trade (units * price diff)
+  regions: 'Metropolis, Heimatar, Derelik, Molden Heath', // Region names included in the search
+  fromSystems: 'Rens',
+  fromSystemRadius: 0, // Radius (in jumps) from the 'fromSystems' array.
+  minSecurity: 0 // Minimum security status of from/to system.
+};
+
+
+/**
+ *
+ * @param req Express request.
+ */
+function getConstraints(req) {
+  const constraints = extend({}, defaultConstraints);
+  for (const key in defaultConstraints) {
+    if (!defaultConstraints.hasOwnProperty(key)) {
+      continue;
+    }
+    if (req.query[key]) {
+      constraints[key] = isInteger(key) ? parseInt(req.query[key]) : req.query[key];
+    }
+  }
+  return prepareConstraints(constraints);
+}
+
+function isInteger(key) {
+  return key !== 'regions' && key !== 'fromSystems';
+}
 /**
  *
  * @param constraints
@@ -41,5 +73,6 @@ function prepareConstraints(constraints) {
 }
 
 module.exports = {
-  prepareConstraints
+  prepareConstraints,
+  getConstraints
 };

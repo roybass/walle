@@ -4,7 +4,6 @@ const logger = require('../logger');
 const stations = require('../static/stations');
 const systems = require('../static/systems');
 
-const pairs = new Set();
 class TradeFinder {
 
   findTradesInRegions(constraints, routesCalculator) {
@@ -53,6 +52,7 @@ class TradeFinder {
   }
 
   findTrades(buyOrders, sellOrders, constraints, types, routesCalculator) {
+    const pairs = new Set();
     const trades = [];
     let all = 0;
     for (const buyEntry of buyOrders) {
