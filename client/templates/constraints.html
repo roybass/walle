@@ -1,0 +1,74 @@
+<form>
+    <div class="container">
+        <div class="form-group row">
+            <label for="regions" class="col-sm-2 col-form-label">Regions</label>
+
+            <div class="col-sm-10">
+                <input type="text" class="form-control" ng-model="constraints.regions" id="regions">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="fromSystems" class="col-sm-2 col-form-label">From Systems</label>
+
+            <div class="col-sm-10">
+                <input type="text" class="form-control" ng-model="constraints.fromSystems" id="fromSystems">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="fromSystemRadius" class="col-sm-2 col-form-label">From Jump Radius</label>
+
+            <div class="col-sm-2">
+                <input class="form-control" ng-model="constraints.fromSystemRadius" id="fromSystemRadius">
+            </div>
+
+            <label for="maxCash" class="col-sm-1 col-form-label">Max Cash</label>
+
+            <div class="col-sm-2">
+                <input class="form-control" ng-model="constraints.maxCash" id="maxCash">
+            </div>
+            <label for="minSecurity" class="col-sm-1 col-form-label">Minimum Security</label>
+
+            <div class="col-sm-2">
+                <input class="form-control" ng-model="constraints.minSecurity" id="minSecurity">
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+            <label for="maxCapacity" class="col-sm-2 col-form-label">Max Cargo Capacity</label>
+
+            <div class="col-sm-2">
+                <input class="form-control" ng-model="constraints.maxCapacity" id="maxCapacity">
+            </div>
+
+            <label for="minProfit" class="col-sm-1 col-form-label">Minimum Profit</label>
+
+            <div class="col-sm-2">
+                <input class="form-control" ng-model="constraints.minProfit" id="minProfit">
+            </div>
+
+            <label for="maxJumps" class="col-sm-1 col-form-label">Max Jumps</label>
+
+            <div class="col-sm-2">
+                <input class="form-control" ng-model="constraints.maxJumps" id="maxJumps">
+            </div>
+
+            <div class="col-sm-1">
+                <button class="btn btn-primary pull-right" ng-click="refresh()">Go!</button>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<!--
+maxCash: 30000000, // Max available cash for trading
+maxJumps: 10, // Max jumps
+maxCapacity: 5100, // Cubic meters available for hauling
+minProfit: 100000, // Minimum profit per trade (units * price diff)
+regions: 'Metropolis, Heimatar, Derelik, Molden Heath', // Region names included in the search
+fromSystems: 'Rens',
+fromSystemRadius: 0, // Radius (in jumps) from the 'fromSystems' array.
+minSecurity: 0 // Minimum security status of from/to system.
+-->
