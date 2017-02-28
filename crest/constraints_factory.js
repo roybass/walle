@@ -12,12 +12,12 @@ const logger = require('../logger');
 function prepareConstraints(constraints) {
   logger.info('Optimized contraints');
   const newConstraints = extend({}, constraints);
-  newConstraints.regions = constraints.regions.map(regions.getId);
+  newConstraints.regions = constraints.regions.split(',').map((system) => regions.getId(system.trim()));
   if (constraints.fromSystems) {
-    newConstraints.fromSystems = constraints.fromSystems.map((name) => {
-      const id = systems.nameToId(name);
-      if (!id) {
-        throw Error('Unknown system ' + name);
+    newConstraints.fromSystems = constraints.fromSystems.split(',').map((name) => {
+      const id = systems.nameToId(name.trim());
+      if (id === -1) {
+        throw Error('Unknown system ' + name.trim());
       }
       return id;
     });

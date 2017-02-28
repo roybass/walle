@@ -1,10 +1,12 @@
+const extend = require('extend');
 const numeral = require('numeral');
 const trade = require('./crest/trade');
 const routesCalc = require('./crest/route_calculator');
 const constraintsFactory = require('./crest/constraints_factory');
 const logger = require('./logger');
+const express = require('express');
 
-const constraints = {
+const defaultConstraints = {
   maxCash: 30000000, // Max available cash for trading
   maxJumps: 10, // Max jumps
   maxCapacity: 5100, // Cubic meters available for hauling
@@ -16,19 +18,37 @@ const constraints = {
 };
 
 
-routesCalc.init()
-  .then((routesCalculator) => {
-    logger.info('Fetching orders for regions ', constraints.regions);
-    return trade.findTradesInRegions(constraintsFactory.prepareConstraints(constraints), routesCalculator);
-  })
-  .then((trades) => {
-    logger.info('Found %d good trades', trades.length);
+const app = express();
 
-    logger.info('Top 10 Routes:');
-    for (let i = 0; i < 10; i++) {
-      logger.info('Trade %d: %s', i, JSON.stringify(formatTrade(trades[i]), null, ' '));
+const port = 8080;
+
+routesCalc.init().then((routesCalculator) => {
+
+  app.get('/bestTrades', (req, res)  => {
+
+    const constraints = extend({}, defaultConstraints);
+    for (const key in defaultConstraints) {
+      if (!defaultConstraints.hasOwnProperty(key)) {
+        continue;
+      }
+      if (req.query[key]) {
+        constraints[key] = req.query[key];
+      }
     }
+
+    trade.findTradesInRegions(constraintsFactory.prepareConstraints(constraints), routesCalculator)
+      .then((routes) => {
+        res.json(routes.map(formatTrade));
+      });
+
   });
+
+
+  app.listen(port, () => {
+    logger.info('Server ready on port ' + port);
+  });
+});
+
 
 function formatTrade(t) {
   if (t === undefined) {
