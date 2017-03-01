@@ -76,5 +76,6 @@ for (let key in idToName) {
 
 module.exports = {
   getName: (id) => idToName[id],
-  getId: (name) => nameToId[name]
+  getId: (name) => nameToId[name],
+  getAllRegions: () => Object.keys(nameToId)
 };

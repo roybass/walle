@@ -1,23 +1,40 @@
-var walleApp = angular.module('walleApp', []);
+var walleApp = angular.module('walleApp', ['ngTagsInput']);
 
 walleApp.component('constraints', {
   templateUrl: 'templates/constraints.html',
-  controller: function ConstraintsController($scope) {
+  controller: function ConstraintsController($scope, $http) {
     $scope.constraints = {
       maxCash: 30000000, // Max available cash for trading
       maxJumps: 10, // Max jumps
       maxCapacity: 5100, // Cubic meters available for hauling
       minProfit: 100000, // Minimum profit per trade (units * price diff)
-      regions: 'Metropolis, Heimatar, Derelik, Molden Heath', // Region names included in the search
       fromSystems: 'Rens',
       fromSystemRadius: 0, // Radius (in jumps) from the 'fromSystems' array.
       minSecurity: 0 // Minimum security status of from/to system.
     };
 
-    $scope.refresh = function() {
+    $scope.refresh = function () {
       console.log("Emitting refresh");
+      $scope.constraints.regions = $scope.regions.map((item) => item.text).join(',');
       $scope.$parent.$emit('refresh', $scope.constraints);
-    }
+    };
+
+    $scope.allRegions = function (query) {
+      const lcaseQuery = query.toLowerCase();
+      return $http.get('/api/regions').then((result) => {
+        console.log(result);
+        return result.data.filter((item) => item.toLowerCase().indexOf(lcaseQuery) >= 0).map((name) => {
+          return { text: name }
+        });
+      });
+    };
+
+    $scope.regions = [
+      { text: 'Metropolis' },
+      { text: 'Heimatar' },
+      { text: 'Derelik' },
+      { text: 'Molden Heath' }
+    ];
   }
 });
 
@@ -26,7 +43,7 @@ walleApp.component('trades', {
   templateUrl: 'templates/trades.html',
   controller: function TradesController($scope, $http) {
 
-    $scope.$parent.$on('refresh', function(event, args) {
+    $scope.$parent.$on('refresh', function (event, args) {
       $scope.trades = [];
       $scope.loader = true;
 
@@ -47,19 +64,6 @@ walleApp.component('trades', {
         console.log(result.data);
       });
     });
-
-    $scope.getLoader = function() {
-      var loaders = [
-        'http://bestanimations.com/Music/Dancers/happy-dance/happy-dance-animated-gif-image-1-2.gif',
-        'https://media.giphy.com/media/12PRIhZ7sPNMEE/giphy.gif',
-        'https://s-media-cache-ak0.pinimg.com/originals/c3/f4/fb/c3f4fbb1ec2baa386a73a8ef514e2edd.gif',
-        'https://i.imgur.com/i6eXrfS.gif',
-        'https://s-media-cache-ak0.pinimg.com/originals/72/46/7e/72467e84661bddcf4dafa30b94e1c35f.gif',
-        'https://s-media-cache-ak0.pinimg.com/originals/5d/12/10/5d121032b495b825b272b10d0c88a0bd.gif',
-        'https://s-media-cache-ak0.pinimg.com/originals/2e/41/57/2e4157a3a0a4734f497eaad95e6071a8.gif'
-      ];
-      return loaders[Math.floor(Math.random() * loaders.length)];
-    };
 
     $scope.$parent.$emit('refresh', {});
   }

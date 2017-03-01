@@ -1,6 +1,7 @@
 const extend = require('extend');
 const numeral = require('numeral');
 const trade = require('./crest/trade');
+const regions = require('./static/regions');
 const routesCalc = require('./crest/route_calculator');
 const constraintsFactory = require('./crest/constraints_factory');
 const logger = require('./logger');
@@ -19,6 +20,7 @@ routesCalc.init().then((routesCalculator) => {
       });
   });
 
+  app.use('/api/regions', (req, res) => res.json(regions.getAllRegions()));
   app.use('/', express.static('client'));
 
   app.listen(port, () => {
