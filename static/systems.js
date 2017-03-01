@@ -7959,7 +7959,12 @@ function nameToId(name) {
 function findById(id) {
   return idToStation[id];
 }
+
+function getAllSystems() {
+  return Object.keys(nameToStation);
+}
 module.exports = {
   findById,
-  nameToId
+  nameToId,
+  getAllSystems
 };

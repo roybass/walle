@@ -2,6 +2,7 @@ const extend = require('extend');
 const numeral = require('numeral');
 const trade = require('./crest/trade');
 const regions = require('./static/regions');
+const systems = require('./static/systems');
 const routesCalc = require('./crest/route_calculator');
 const constraintsFactory = require('./crest/constraints_factory');
 const logger = require('./logger');
@@ -21,6 +22,7 @@ routesCalc.init().then((routesCalculator) => {
   });
 
   app.use('/api/regions', (req, res) => res.json(regions.getAllRegions()));
+  app.use('/api/systems', (req, res) => res.json(systems.getAllSystems()));
   app.use('/', express.static('client'));
 
   app.listen(port, () => {
@@ -54,6 +56,14 @@ function formatTrade(t) {
     profitPercent: numeral(t.profit / (t.tradeUnits * t.sellOrder.price)).format('0.00%'),
     units: t.tradeUnits,
     jumps: t.jumps,
+    route: t.route.map((systemId) => {
+      const system = systems.findById(systemId);
+      return {
+        systemName: system.systemName,
+        regionName: system.regionName,
+        security: system.security
+      }
+    }),
     totalVolume: t.type ? t.tradeUnits * t.type.volume : 'N/A'
   };
 }

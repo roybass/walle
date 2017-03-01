@@ -8,7 +8,6 @@ walleApp.component('constraints', {
       maxJumps: 10, // Max jumps
       maxCapacity: 5100, // Cubic meters available for hauling
       minProfit: 100000, // Minimum profit per trade (units * price diff)
-      fromSystems: 'Rens',
       fromSystemRadius: 0, // Radius (in jumps) from the 'fromSystems' array.
       minSecurity: 0 // Minimum security status of from/to system.
     };
@@ -16,6 +15,7 @@ walleApp.component('constraints', {
     $scope.refresh = function () {
       console.log("Emitting refresh");
       $scope.constraints.regions = $scope.regions.map((item) => item.text).join(',');
+      $scope.constraints.fromSystems = $scope.systems.map((item) => item.text).join(',');
       $scope.$parent.$emit('refresh', $scope.constraints);
     };
 
@@ -29,11 +29,24 @@ walleApp.component('constraints', {
       });
     };
 
+    $scope.allSystems = function(query) {
+      const lcaseQuery = query.toLowerCase();
+      return $http.get('/api/systems').then((result) => {
+        console.log(result);
+        return result.data.filter((item) => item.toLowerCase().indexOf(lcaseQuery) >= 0).map((name) => {
+          return { text: name }
+        });
+      });
+    };
+
     $scope.regions = [
       { text: 'Metropolis' },
       { text: 'Heimatar' },
       { text: 'Derelik' },
       { text: 'Molden Heath' }
+    ];
+    $scope.systems = [
+      { text: 'Rens' }
     ];
   }
 });
