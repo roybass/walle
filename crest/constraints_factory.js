@@ -10,7 +10,7 @@ const defaultConstraints = {
   maxCapacity: 5100, // Cubic meters available for hauling
   minProfit: 100000, // Minimum profit per trade (units * price diff)
   regions: 'Metropolis, Heimatar, Derelik, Molden Heath', // Region names included in the search
-  fromSystems: 'Rens',
+  fromSystems: null,
   fromSystemRadius: 0, // Radius (in jumps) from the 'fromSystems' array.
   minSecurity: 0 // Minimum security status of from/to system.
 };

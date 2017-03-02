@@ -79,6 +79,7 @@ class TradeFinder {
       let maxProfit = 0;
       let maxProfitTrade = null;
 
+      const potentialTrades = [];
       for (const sellOrder of sellOrdersArr) {
         all++;
         if (sellOrder.price > buyOrdersArr[0]) {
@@ -125,20 +126,19 @@ class TradeFinder {
             continue;
           }
           pairs.add(buyOrder.stationID + '_' + sellOrder.stationID);
-          const route = routesCalculator.getRoute(sellOrder.station.systemId, buyOrder.station.systemId, true);
-          if (route.length > constraints.maxJumps) {
-            continue;
-          }
-          const jumps = route.length;
-
-          if (profit > maxProfit) {
-            maxProfit = profit;
-            maxProfitTrade = { profit, buyOrder, sellOrder, tradeUnits, route, jumps, type, typeId };
-          }
+          potentialTrades.push({ profit, buyOrder, sellOrder, tradeUnits, type, typeId });
         }
       }
-      if (maxProfitTrade != null) {
-        trades.push(maxProfitTrade);
+      potentialTrades.sort((a, b) => b.profit - a.profit);
+      for (let trade of potentialTrades) {
+        const route = routesCalculator.getRoute(trade.sellOrder.station.systemId, trade.buyOrder.station.systemId, true);
+        if (route.length > constraints.maxJumps) {
+          continue;
+        }
+        trade.route = route;
+        trade.jumps = route.length;
+        trades.push(trade);
+        break;
       }
     }
     logger.info('Scanned %d possible trades', all);

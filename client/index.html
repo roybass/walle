@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.min.css"/>
+    <link rel="stylesheet" href="bower_components/angular-tooltips/dist/angular-tooltips.css"/>
     <link rel="stylesheet" href="css/main.css"/>
 
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
@@ -15,18 +16,24 @@
     <script src="bower_components/ng-tags-input/ng-tags-input.min.js"></script>
     <script src="bower_components/numeral/numeral.js"></script>
     <script src="bower_components/angular-numeraljs/dist/angular-numeraljs.js"></script>
+    <script src="bower_components/angular-tooltips/dist/angular-tooltips.js"></script>
     <script src="js/app.js" type="application/javascript"></script>
 
 </head>
 
 <body>
 
-<div class="container">
+<div class="constraints container">
     <constraints></constraints>
 </div>
-<div class="container">
+<div class="trades container">
     <trades></trades>
 </div>
 
+<script>
+    $(document).ready(function() {
+       $(".regionsSelect").focus();
+    });
+</script>
 </body>
 </html>

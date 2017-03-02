@@ -1,4 +1,4 @@
-var walleApp = angular.module('walleApp', ['ngTagsInput', 'ngNumeraljs']);
+var walleApp = angular.module('walleApp', ['ngTagsInput', 'ngNumeraljs', '720kb.tooltips']);
 
 walleApp.component('constraints', {
   templateUrl: 'templates/constraints.html',
@@ -72,13 +72,14 @@ walleApp.component('trades', {
     };
 
     $scope.$parent.$on('refresh', function (event, args) {
+      console.log("Refresh args : ", args);
       $scope.trades = [];
       $scope.loader = true;
 
       var url = '/api/bestTrades';
       var query = [];
       for (var key in args) {
-        if (!args.hasOwnProperty(key)) {
+        if (!args.hasOwnProperty(key) || !args[key]) {
           continue;
         }
         query.push(key + '=' + args[key]);
@@ -106,7 +107,5 @@ walleApp.component('trades', {
       if (security >= 0.1) return '#F00000';
       return '#F00000';
     };
-
-    $scope.$parent.$emit('refresh', {});
   }
 });

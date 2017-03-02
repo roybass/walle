@@ -1,8 +1,7 @@
-<table class="table table-striped table-hover" ng-if="!loader">
+<table ng-show="trades.length > 0" class="table table-striped table-hover" ng-if="!loader">
     <thead class="thead-inverse">
     <tr>
         <th>#</th>
-
         <th> <a href="#" ng-click="setSortField('profit'); toggleOrder()">Profit (ISK)</a></th>
         <th style="min-width:100px"><a href="#" ng-click="setSortField('jumps'); toggleOrder()">Route</a></th>
         <th> <a href="#" ng-click="setSortField('profitPerJump'); toggleOrder()">Profit / Jump</a></th>
@@ -12,6 +11,7 @@
         <th> <a href="#" ng-click="setSortField('totalVolume'); toggleOrder()">Volume</a></th>
         <th> <a href="#" ng-click="setSortField('buy.station.name'); toggleOrder()">From Station</a></th>
         <th> <a href="#" ng-click="setSortField('sell.station.name'); toggleOrder()">To Station</a></th>
+        <th> <a href="#" ng-click="setSortField('buy.price'); toggleOrder()">Buy Price</a></th>
     </tr>
     </thead>
     <tbody>
@@ -19,14 +19,15 @@
     <tr ng-repeat="trade in trades | orderBy:sortField:sortOrder">
         <th>{{$index + 1}}</th>
         <td>{{trade.profit | numeraljs}}</td>
-        <td><span ng-repeat="system in trade.route"><span style="color:{{getSecurityColor(system.security)}}" class="route glyphicon glyphicon glyphicon-stop" aria-hidden="true"></span></span></td>
+        <td>{{trade.jumps}} : <span ng-repeat="system in trade.route"><span tooltips tooltip-template="{{system.systemName}} ({{system.security | numeraljs:'0.00'}})" style="color:{{getSecurityColor(system.security)}}" class="route glyphicon glyphicon glyphicon-stop" aria-hidden="true"></span></span></td>
         <td>{{trade.profitPerJump | numeraljs}}</td>
         <td>{{trade.profitPercent | numeraljs:'0.00%'}}</td>
-        <td>{{trade.type.name}}</td>
+        <td><a href="https://eve-central.com/home/quicklook.html?typeid={{trade.type.id}}" target="_blank" >{{trade.type.name}}</a></td>
         <td>{{trade.units | numeraljs}}</td>
         <td>{{trade.totalVolume | numeraljs:'0.0'}}</td>
         <td>{{trade.buy.station.name}}</td>
         <td>{{trade.sell.station.name}}</td>
+        <td>{{trade.buy.price | numeraljs:'0,0.0'}}</td>
     </tr>
     </tbody>
 </table>
