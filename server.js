@@ -1,5 +1,4 @@
 const extend = require('extend');
-const numeral = require('numeral');
 const trade = require('./crest/trade');
 const regions = require('./static/regions');
 const systems = require('./static/systems');
@@ -37,12 +36,12 @@ function formatTrade(t) {
   }
   return {
     buy: {
-      price: numeral(t.sellOrder.price).format('0,0'),
+      price: t.sellOrder.price,
       units: t.sellOrder.volume,
       station: t.sellOrder.station
     },
     sell: {
-      price: numeral(t.buyOrder.price).format('0,0'),
+      price: t.buyOrder.price,
       units: t.buyOrder.volume,
       station: t.buyOrder.station
     },
@@ -51,9 +50,9 @@ function formatTrade(t) {
       name: t.type.name.en,
       volume: t.type.volume
     },
-    profit: numeral(t.profit).format('0,0'),
-    profitPerJump: numeral((Math.floor(t.profit / t.jumps))).format('0,0'),
-    profitPercent: numeral(t.profit / (t.tradeUnits * t.sellOrder.price)).format('0.00%'),
+    profit: t.profit,
+    profitPerJump: Math.floor(t.profit / t.jumps),
+    profitPercent: t.profit / (t.tradeUnits * t.sellOrder.price),
     units: t.tradeUnits,
     jumps: t.jumps,
     route: t.route.map((systemId) => {

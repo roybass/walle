@@ -2,30 +2,31 @@
     <thead class="thead-inverse">
     <tr>
         <th>#</th>
-        <th>Profit (ISK)</th>
-        <th>Jumps</th>
-        <th>Profit / Jump</th>
-        <th>Profit Margin</th>
-        <th>Item</th>
-        <th>Units</th>
-        <th>Volume</th>
-        <th>From Station</th>
-        <th>To Station</th>
+
+        <th> <a href="#" ng-click="setSortField('profit'); toggleOrder()">Profit (ISK)</a></th>
+        <th style="min-width:100px"><a href="#" ng-click="setSortField('jumps'); toggleOrder()">Route</a></th>
+        <th> <a href="#" ng-click="setSortField('profitPerJump'); toggleOrder()">Profit / Jump</a></th>
+        <th> <a href="#" ng-click="setSortField('profitPercent'); toggleOrder()">Profit Margin</a></th>
+        <th> <a href="#" ng-click="setSortField('type.name'); toggleOrder()">Item</a></th>
+        <th> <a href="#" ng-click="setSortField('units'); toggleOrder()">Units</a></th>
+        <th> <a href="#" ng-click="setSortField('totalVolume'); toggleOrder()">Volume</a></th>
+        <th> <a href="#" ng-click="setSortField('buy.station.name'); toggleOrder()">From Station</a></th>
+        <th> <a href="#" ng-click="setSortField('sell.station.name'); toggleOrder()">To Station</a></th>
     </tr>
     </thead>
     <tbody>
 
-    <tr ng-repeat="trade in trades">
+    <tr ng-repeat="trade in trades | orderBy:sortField:sortOrder">
         <th>{{$index + 1}}</th>
-        <td>{{trade.profit}}</td>
-        <td>{{trade.jumps}}</td>
-        <td>{{trade.profitPerJump}}</td>
-        <td>{{trade.profitPercent}}</td>
+        <td>{{trade.profit | numeraljs}}</td>
+        <td><span ng-repeat="system in trade.route"><span style="color:{{getSecurityColor(system.security)}}" class="route glyphicon glyphicon glyphicon-stop" aria-hidden="true"></span></span></td>
+        <td>{{trade.profitPerJump | numeraljs}}</td>
+        <td>{{trade.profitPercent | numeraljs:'0.00%'}}</td>
         <td>{{trade.type.name}}</td>
-        <td>{{trade.units}}</td>
-        <td>{{trade.totalVolume}}</td>
-        <td>{{trade.buy.station.name}} ({{trade.buy.station.security}})</td>
-        <td>{{trade.sell.station.name}} ({{trade.sell.station.security}})</td>
+        <td>{{trade.units | numeraljs}}</td>
+        <td>{{trade.totalVolume | numeraljs:'0.0'}}</td>
+        <td>{{trade.buy.station.name}}</td>
+        <td>{{trade.sell.station.name}}</td>
     </tr>
     </tbody>
 </table>

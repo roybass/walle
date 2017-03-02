@@ -1,4 +1,4 @@
-var walleApp = angular.module('walleApp', ['ngTagsInput']);
+var walleApp = angular.module('walleApp', ['ngTagsInput', 'ngNumeraljs']);
 
 walleApp.component('constraints', {
   templateUrl: 'templates/constraints.html',
@@ -29,7 +29,7 @@ walleApp.component('constraints', {
       });
     };
 
-    $scope.allSystems = function(query) {
+    $scope.allSystems = function (query) {
       const lcaseQuery = query.toLowerCase();
       return $http.get('/api/systems').then((result) => {
         console.log(result);
@@ -56,6 +56,21 @@ walleApp.component('trades', {
   templateUrl: 'templates/trades.html',
   controller: function TradesController($scope, $http) {
 
+    $scope.sortField = 'profitPercent';
+    $scope.sortOrder = true;
+    $scope.setSortField = function(sortField) {
+      $scope.previousSortField = $scope.sortField;
+      $scope.sortField = sortField;
+    };
+    $scope.toggleOrder = function() {
+      console.log($scope.previousSortField, $scope.sortField);
+      if ($scope.previousSortField == $scope.sortField) {
+        $scope.sortOrder = !$scope.sortOrder;
+      } else {
+        $scope.sortOrder = true;
+      }
+    };
+
     $scope.$parent.$on('refresh', function (event, args) {
       $scope.trades = [];
       $scope.loader = true;
@@ -77,6 +92,20 @@ walleApp.component('trades', {
         console.log(result.data);
       });
     });
+
+    $scope.getSecurityColor = function (security) {
+      if (security >= 1) return '#2FEFEF';
+      if (security >= 0.9) return '#48F0C0';
+      if (security >= 0.8) return '#00EF47';
+      if (security >= 0.7) return '#00F000';
+      if (security >= 0.6) return '#8FEF2F';
+      if (security >= 0.5) return '#EFEF00';
+      if (security >= 0.4) return '#D77700';
+      if (security >= 0.3) return '#F06000';
+      if (security >= 0.2) return '#F04800';
+      if (security >= 0.1) return '#F00000';
+      return '#F00000';
+    };
 
     $scope.$parent.$emit('refresh', {});
   }
