@@ -11,6 +11,10 @@ const app = express();
 
 const port = 8080;
 
+process.on('unhandledRejection', function(reason, p) {
+  console.log("Unhandled Rejection:", reason.stack);
+});
+
 routesCalc.init().then((routesCalculator) => {
 
   app.get('/api/bestTrades', (req, res)  => {
@@ -27,6 +31,7 @@ routesCalc.init().then((routesCalculator) => {
   app.listen(port, () => {
     logger.info('Server ready on port ' + port);
   });
+
 });
 
 

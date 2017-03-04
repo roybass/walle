@@ -8,7 +8,9 @@ class CrestClient {
 
   getAllMarketOrders(regionId) {
     const url = 'market/' + regionId + '/orders/all/';
-    return this.getDataPaged(url, consts.HOUR);
+    return this.getDataPaged(url, consts.HOUR).then((data) => { 
+      return {data, regionId};
+    });
   }
 
   getRegions() {

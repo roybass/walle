@@ -18,8 +18,8 @@ class TradeFinder {
     return Promise.all(orderPromises).then((ordersPerRegion) => {
       for (const regionOrders of ordersPerRegion) {
         // regionOrders is paged, so it's an array as well.
-        logger.debug('%d pages found', regionOrders.length);
-        this.addOrders(regionOrders, buyOrders, sellOrders);
+        logger.debug('%d pages found for %s', regionOrders.data.length, regionOrders.regionId);
+        this.addOrders(regionOrders.data, buyOrders, sellOrders);
       }
       logger.debug("Added sell orders for %d types", sellOrders.size);
       logger.debug("Added buy orders for %d types", buyOrders.size);
@@ -32,6 +32,10 @@ class TradeFinder {
 
   addOrders(regionOrders, buyOrders, sellOrders) {
     for (const ordersPage of regionOrders) {
+      if (!ordersPage.items) {
+        logger.error("No pages found in order object");
+        continue;
+      }
       for (const order of ordersPage.items) {
         if (order.buy === true) {
           this.addOrder(order, buyOrders);

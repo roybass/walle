@@ -1,5 +1,6 @@
 const fsp = require('fs-promise');
 const NodeCache = require('node-cache');
+const logger = require('../logger');
 const root = __dirname + '/../cache';
 const defaultMaxAge = 1000 * 60 * 60; // 1 hour
 
@@ -10,6 +11,7 @@ class FileStore {
   get(key, maxAge) {
     const valueFromMem = cache.get(key);
     if (valueFromMem) {
+      logger.debug("Found %s in memory cache", key);
       return Promise.resolve(valueFromMem);
     }
     const actualMaxAge = maxAge | defaultMaxAge;
@@ -36,11 +38,13 @@ class FileStore {
         }
 
         if (maxTime == -1) {
+          logger.debug("No recent file found for key %s", key);
           return null;
         }
         return fsp.readFile(res.folder + '/' + maxTime).then((buffer) => {
           let data = buffer.toString();
           cache.set(key, data);
+          logger.debug("Found %s in file store", key);
           return data;
         });
       });
