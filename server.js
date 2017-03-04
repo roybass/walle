@@ -1,9 +1,9 @@
 const extend = require('extend');
-const trade = require('./crest/trade');
+const trade = require('./server/trade');
 const regions = require('./static/regions');
 const systems = require('./static/systems');
-const routesCalc = require('./crest/route_calculator');
-const constraintsFactory = require('./crest/constraints_factory');
+const routesCalc = require('./server/route_calculator');
+const constraintsFactory = require('./server/constraints_factory');
 const logger = require('./logger');
 const express = require('express');
 

@@ -1,8 +1,8 @@
 const rp = require('request-promise');
 const fileStore = require('./file_store');
 const crestBaseUrl = 'https://crest-tq.eveonline.com/';
-const consts = require('./const');
-const log = require('../logger');
+const consts = require('./../const');
+const log = require('../../logger');
 
 class CrestClient {
 

@@ -1,6 +1,6 @@
 const fsp = require('fs-promise');
 const NodeCache = require('node-cache');
-const logger = require('../logger');
+const logger = require('../../logger');
 const root = __dirname + '/../cache';
 const defaultMaxAge = 1000 * 60 * 60; // 1 hour
 

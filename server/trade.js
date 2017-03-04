@@ -1,4 +1,4 @@
-const crest = require('./crest');
+const crest = require('./crest/crest');
 const sde = require('eve-online-sde');
 const logger = require('../logger');
 const stations = require('../static/stations');

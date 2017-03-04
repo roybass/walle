@@ -1,7 +1,7 @@
 const numeral = require('numeral');
-const trade = require('./crest/trade');
-const routesCalc = require('./crest/route_calculator');
-const constraintsFactory = require('./crest/constraints_factory');
+const trade = require('./server/trade');
+const routesCalc = require('./server/route_calculator');
+const constraintsFactory = require('./server/constraints_factory');
 const logger = require('./logger');
 
 const constraints = {
