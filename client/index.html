@@ -17,25 +17,16 @@
     <script src="bower_components/numeral/numeral.js"></script>
     <script src="bower_components/angular-numeraljs/dist/angular-numeraljs.js"></script>
     <script src="bower_components/angular-tooltips/dist/angular-tooltips.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="js/app.js" type="application/javascript"></script>
     <script src="js/constraints.js" type="application/javascript"></script>
     <script src="js/trades.js" type="application/javascript"></script>
 
 </head>
 
-<body>
+<body ng-app="walleApp" ng-controller="MainController">
 
-<div class="constraints container">
-    <constraints></constraints>
-</div>
-<div class="trades container">
-    <trades></trades>
-</div>
+<div ng-view></div>
 
-<script>
-    $(document).ready(function() {
-       $(".regionsSelect").focus();
-    });
-</script>
 </body>
 </html>
