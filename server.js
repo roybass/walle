@@ -7,11 +7,13 @@ const constraintsFactory = require('./server/constraints_factory');
 const logger = require('./logger');
 const express = require('express');
 
+require('./server/cache_warmer');
+
 const app = express();
 
 const port = 8080;
 
-process.on('unhandledRejection', function(reason, p) {
+process.on('unhandledRejection', function (reason, p) {
   console.log("Unhandled Rejection:", reason.stack);
 });
 
