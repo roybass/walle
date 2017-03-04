@@ -80,8 +80,6 @@ class TradeFinder {
       if (sellOrdersArr[0] > constraints.maxCash) {
         continue; // Too expensive.
       }
-      let maxProfit = 0;
-      let maxProfitTrade = null;
 
       const potentialTrades = [];
       for (const sellOrder of sellOrdersArr) {
@@ -122,7 +120,8 @@ class TradeFinder {
           }
           const tradeUnits = Math.min(availableUnits, maxUnits);
 
-          const profit = tradeUnits * priceDiff;
+          const tax = (constraints.tax * tradeUnits * buyOrder.price); // Tax is a percent of Buy Order price.
+          const profit = tradeUnits * priceDiff - tax;
           if (profit < constraints.minProfit) {
             continue;
           }

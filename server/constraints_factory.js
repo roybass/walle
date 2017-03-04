@@ -12,7 +12,8 @@ const defaultConstraints = {
   regions: 'Metropolis, Heimatar, Derelik, Molden Heath', // Region names included in the search
   fromSystems: null,
   fromSystemRadius: 0, // Radius (in jumps) from the 'fromSystems' array.
-  minSecurity: 0 // Minimum security status of from/to system.
+  minSecurity: 0, // Minimum security status of from/to system.
+  tax: 0.02 // Minimum security status of from/to system.
 };
 
 

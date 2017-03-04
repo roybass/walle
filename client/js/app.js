@@ -56,7 +56,7 @@ walleApp.component('trades', {
   templateUrl: 'templates/trades.html',
   controller: function TradesController($scope, $http) {
 
-    $scope.sortField = 'profitPercent';
+    $scope.sortField = 'profit';
     $scope.sortOrder = true;
     $scope.setSortField = function(sortField) {
       $scope.previousSortField = $scope.sortField;
