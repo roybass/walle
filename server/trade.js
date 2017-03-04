@@ -105,6 +105,9 @@ class TradeFinder {
           if (buyOrder.station.security < constraints.minSecurity) {
             continue; // Too dangerous..
           }
+          if (constraints.toSystems && !constraints.toSystems.has(buyOrder.station.systemId)) {
+            continue; // We have a 'to system' constraint and it doesn't match
+          }
           const priceDiff = buyOrder.price - sellOrder.price;
           if (priceDiff <= 0) {
             break;

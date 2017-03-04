@@ -12,6 +12,7 @@ const defaultConstraints = {
   regions: 'Metropolis, Heimatar, Derelik, Molden Heath', // Region names included in the search
   fromSystems: null,
   fromSystemRadius: 0, // Radius (in jumps) from the 'fromSystems' array.
+  toSystems: null, // Only
   minSecurity: 0, // Minimum security status of from/to system.
   tax: 0.02 // Minimum security status of from/to system.
 };
@@ -35,7 +36,7 @@ function getConstraints(req) {
 }
 
 function isInteger(key) {
-  return key !== 'regions' && key !== 'fromSystems';
+  return key !== 'regions' && key !== 'fromSystems' && key !== 'toSystems';
 }
 /**
  *
@@ -46,6 +47,15 @@ function prepareConstraints(constraints) {
   logger.info('Optimized contraints');
   const newConstraints = extend({}, constraints);
   newConstraints.regions = constraints.regions.split(',').map((system) => regions.getId(system.trim()));
+  if (constraints.toSystems) {
+    newConstraints.toSystems = new Set(constraints.toSystems.split(',').map(name => {
+      const id = systems.nameToId(name.trim());
+      if (id === -1) {
+        throw Error('Unknown system ' + name.trim());
+      }
+      return id;
+    }));
+  }
   if (constraints.fromSystems) {
     newConstraints.fromSystems = constraints.fromSystems.split(',').map((name) => {
       const id = systems.nameToId(name.trim());

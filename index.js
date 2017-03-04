@@ -12,6 +12,7 @@ const constraints = {
   regions: 'Metropolis, Heimatar, Derelik, Molden Heath', // Region names included in the search
   fromSystems: 'Rens',
   fromSystemRadius: 2, // Radius (in jumps) from the 'fromSystems' array.
+  toSystems: null,
   minSecurity: 0, // Minimum security status of from/to system.
   tax: 0.02 // VAT..  usually 2%.
 };
