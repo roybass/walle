@@ -2,27 +2,36 @@
     <thead class="thead-inverse">
     <tr>
         <th>#</th>
-        <th> <a href="" ng-click="setSortField('profit'); toggleOrder()">Profit (ISK)</a></th>
+        <th><a href="" ng-click="setSortField('profit'); toggleOrder()">Profit (ISK)</a></th>
         <th style="min-width:100px"><a href="" ng-click="setSortField('jumps'); toggleOrder()">Route</a></th>
-        <th> <a href="" ng-click="setSortField('profitPerJump'); toggleOrder()">Profit / Jump</a></th>
-        <th> <a href="" ng-click="setSortField('profitPercent'); toggleOrder()">Profit Margin</a></th>
-        <th> <a href="" ng-click="setSortField('type.name'); toggleOrder()">Item</a></th>
-        <th> <a href="" ng-click="setSortField('units'); toggleOrder()">Units</a></th>
-        <th> <a href="" ng-click="setSortField('totalVolume'); toggleOrder()">Volume</a></th>
-        <th> <a href="" ng-click="setSortField('buy.station.name'); toggleOrder()">From Station</a></th>
-        <th> <a href="" ng-click="setSortField('sell.station.name'); toggleOrder()">To Station</a></th>
+        <th><a href="" ng-click="setSortField('profitPerJump'); toggleOrder()">Profit / Jump</a></th>
+        <th><a href="" ng-click="setSortField('profitPercent'); toggleOrder()">Profit Margin</a></th>
+        <th><a href="" ng-click="setSortField('type.name'); toggleOrder()">Item</a></th>
+        <th><a href="" ng-click="setSortField('units'); toggleOrder()">Units</a></th>
+        <th><a href="" ng-click="setSortField('totalVolume'); toggleOrder()">Volume</a></th>
+        <th><a href="" ng-click="setSortField('buy.station.name'); toggleOrder()">From Station</a></th>
+        <th><a href="" ng-click="setSortField('sell.station.name'); toggleOrder()">To Station</a></th>
     </tr>
     </thead>
     <tbody>
 
     <tr ng-repeat="trade in trades | orderBy:sortField:sortOrder">
         <th>{{$index + 1}}</th>
-        <td tooltips tooltip-class="trade-tooltip" tooltip-template="Buy: {{trade.buy.price * trade.units | numeraljs}}<br> Sell: {{trade.sell.price * trade.units | numeraljs}}<br>Tax: {{ 0.02 * trade.sell.price * trade.units | numeraljs}}">
-            {{trade.profit | numeraljs}}</td>
-        <td>{{trade.jumps}} : <span ng-repeat="system in trade.route"><span tooltips tooltip-template="{{system.systemName}} ({{system.security | numeraljs:'0.00'}}) {{system.regionName}}" style="color:{{getSecurityColor(system.security)}}" class="route glyphicon glyphicon glyphicon-stop" aria-hidden="true"></span></span></td>
+        <td tooltips tooltip-class="trade-tooltip"
+            tooltip-template="Buy: {{trade.buy.price * trade.units | numeraljs}} @ {{trade.buy.price | numeraljs}} ISK<br>
+             Sell: {{trade.sell.price * trade.units | numeraljs}} @ {{trade.sell.price | numeraljs}} ISK<br>
+             Tax: {{ 0.02 * trade.sell.price * trade.units | numeraljs}} ISK">
+            {{trade.profit | numeraljs}}
+        </td>
+        <td>{{trade.jumps}} : <span ng-repeat="system in trade.route">
+            <span tooltips
+                  tooltip-template="{{system.systemName}} ({{system.security | numeraljs:'0.00'}}) {{system.regionName}}"
+                  style="color:{{getSecurityColor(system.security)}}" class="route glyphicon glyphicon glyphicon-stop"
+                  aria-hidden="true"></span></span></td>
         <td>{{trade.profitPerJump | numeraljs}}</td>
         <td>{{trade.profitPercent | numeraljs:'0.00%'}}</td>
-        <td><a href="https://eve-central.com/home/quicklook.html?typeid={{trade.type.id}}" target="_blank" >{{trade.type.name}}</a></td>
+        <td><a href="https://eve-central.com/home/quicklook.html?typeid={{trade.type.id}}" target="_blank">{{trade.type.name}}</a>
+        </td>
         <td>{{trade.units | numeraljs}}</td>
         <td>{{trade.totalVolume | numeraljs:'0.0'}}</td>
         <td>{{trade.buy.station.name}}</td>
@@ -30,4 +39,5 @@
     </tr>
     </tbody>
 </table>
-<img ng-if="loader" src="http://bestanimations.com/Music/Dancers/happy-dance/happy-dance-animated-gif-image-1-2.gif" class="img-responsive center-block" />
+<img ng-if="loader" src="http://bestanimations.com/Music/Dancers/happy-dance/happy-dance-animated-gif-image-1-2.gif"
+     class="img-responsive center-block"/>
