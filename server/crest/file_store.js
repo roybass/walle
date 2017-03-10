@@ -8,7 +8,10 @@ const cache = new NodeCache({ stdTTL: defaultMaxAge, checkperiod: defaultMaxAge 
 
 class FileStore {
 
-  get(key, maxAge) {
+  get(key, maxAge, useCache) {
+    if (useCache === false) {
+      return Promise.resolve(null);
+    }
     const valueFromMem = cache.get(key);
     if (valueFromMem) {
       logger.debug("Found %s in memory cache", key);

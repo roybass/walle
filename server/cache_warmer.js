@@ -17,7 +17,7 @@ function refresh() {
   let p = Promise.resolve('');
 
   for (let region of allRegions) {
-    p = p.then(() => crest.getAllMarketOrders(region));
+    p = p.then(() => crest.getAllMarketOrders(region, false));
   }
   p.then(() => {
     const endTime = new Date().getTime();

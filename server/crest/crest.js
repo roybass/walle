@@ -6,9 +6,9 @@ const log = require('../../logger');
 
 class CrestClient {
 
-  getAllMarketOrders(regionId) {
+  getAllMarketOrders(regionId, useCache = true) {
     const url = 'market/' + regionId + '/orders/all/';
-    return this.getDataPaged(url, consts.HOUR).then((data) => { 
+    return this.getDataPaged(url, consts.HOUR, useCache).then((data) => {
       return {data, regionId};
     });
   }
@@ -39,8 +39,8 @@ class CrestClient {
   }
 
 
-  getData(relativeUrl, maxAge) {
-    return fileStore.get(relativeUrl, maxAge).then((data) => {
+  getData(relativeUrl, maxAge, useCache = true) {
+    return fileStore.get(relativeUrl, maxAge, useCache).then((data) => {
       if (data !== undefined && data !== null) {
         // log.debug('Found cached data for %s', relativeUrl);
         return JSON.parse(data);
@@ -61,8 +61,8 @@ class CrestClient {
     });
   }
 
-  getDataPaged(url, maxAge, allData = []) {
-    return this.getData(url, maxAge).then((data) => {
+  getDataPaged(url, maxAge, useCache, allData = []) {
+    return this.getData(url, maxAge, useCache).then((data) => {
       if (data == null) {
         return allData;
       }
