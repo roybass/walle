@@ -16,5 +16,8 @@ walleApp.config(function ($routeProvider, $locationProvider) {
     .when("/route", {
       templateUrl: "templates/route.html"
     })
+    .when("/orders", {
+      template: "<orders></orders>"
+    })
     .otherwise("/main");
 });
