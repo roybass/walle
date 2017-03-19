@@ -57,6 +57,28 @@
             <div class="col-sm-2">
                 <input class="form-control" ng-model="constraints.maxJumps" id="maxJumps">
             </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="shipType" class="col-sm-2 col-form-label">Max Ship Speed (m/s)</label>
+
+            <div class="col-sm-2">
+                <select class="form-control" ng-model="constraints.shipType" id="shipType">
+                    <option ng-repeat="t in shipTypes" value="{{t.id}}">{{t.label}}</option>
+                </select>
+            </div>
+
+            <label for="maxWarpSpeed" class="col-sm-1 col-form-label">Warp speed</label>
+
+            <div class="col-sm-2">
+                <input class="form-control" ng-model="constraints.maxWarpSpeed" id="maxWarpSpeed">
+            </div>
+
+            <label for="alignTime" class="col-sm-1 col-form-label">Align Time</label>
+
+            <div class="col-sm-2">
+                <input class="form-control" ng-model="constraints.alignTime" id="alignTime">
+            </div>
 
             <div class="col-sm-1">
                 <button type="submit" class="btn btn-primary pull-right" ng-click="refresh()">Go!</button>
@@ -75,4 +97,8 @@ regions: 'Metropolis, Heimatar, Derelik, Molden Heath', // Region names included
 fromSystems: 'Rens',
 fromSystemRadius: 0, // Radius (in jumps) from the 'fromSystems' array.
 minSecurity: 0 // Minimum security status of from/to system.
+maxSpeed: 150, // Max ship speed
+maxWarpSpeed: 3, // Max ship warp speed
+alignTime: 5 // Ship align time
+
 -->

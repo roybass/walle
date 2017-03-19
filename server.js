@@ -69,6 +69,7 @@ function formatTrade(t) {
     profitPercent: t.profit / (t.tradeUnits * t.sellOrder.price),
     units: t.tradeUnits,
     jumps: t.jumps,
+    routeTime: t.routeTime,
     route: t.route.map((systemId) => {
       const system = systems.findById(systemId);
       return {

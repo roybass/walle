@@ -55,14 +55,14 @@ class RouteCalculatorWithCache {
           destinationStargate = gates[0];
 
           if (destinationStargate)
-            duration += this._getWarpTime(sellStation.position, destinationStargate.position);
+            duration += this._getWarpTime(sellStation.position, destinationStargate.position, constraints);
         }
         else if (i == route.length - 1) {
           gates = this._matchStargate(current.stargates, [route[i-1]]);
           destinationStargate = gates[0];
 
           if (destinationStargate)
-            duration += this._getWarpTime(buyStation.position, destinationStargate.position);
+            duration += this._getWarpTime(buyStation.position, destinationStargate.position, constraints);
         }
         else {
           gates = this._matchStargate(current.stargates, [route[i-1], route[i+1]]);
@@ -70,7 +70,7 @@ class RouteCalculatorWithCache {
           destinationStargate = gates[1];
 
           if (currentStargate && destinationStargate)
-            duration += this._getWarpTime(currentStargate.position, destinationStargate.position);
+            duration += this._getWarpTime(currentStargate.position, destinationStargate.position, constraints);
         }
       } else {
         return null;
@@ -112,12 +112,12 @@ class RouteCalculatorWithCache {
     return gates;
   }
 
-  _getWarpTime(sPos, dPos) {
-    const warpSpeed = 3;
+  _getWarpTime(sPos, dPos, constraints) {
+    const warpSpeed = constraints.maxWarpSpeed;
     const auToMeter = 149597870700;
-    const alignTime = 5;
+    const alignTime = constraints.alignTime;
     const gate = 8;
-    const k = this.shipsConstants['frigate'];
+    const k = this.shipsConstants[constraints.shipType];
     let duration = 0;
 
     const totalDistance = Math.sqrt( Math.pow((dPos.x - sPos.x), 2) + Math.pow((dPos.y - sPos.y), 2) + Math.pow((dPos.z - sPos.z), 2) );

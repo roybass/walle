@@ -4,6 +4,7 @@
         <th>#</th>
         <th><a href="" ng-click="setSortField('profit'); toggleOrder()">Profit (ISK)</a></th>
         <th style="min-width:100px"><a href="" ng-click="setSortField('jumps'); toggleOrder()">Route</a></th>
+        <th><a href="" ng-click="setSortField('routeTime'); toggleOrder()">Travel Time</a></th>
         <th><a href="" ng-click="setSortField('profitPerJump'); toggleOrder()">Profit / Jump</a></th>
         <th><a href="" ng-click="setSortField('profitPercent'); toggleOrder()">Profit Margin</a></th>
         <th><a href="" ng-click="setSortField('type.name'); toggleOrder()">Item</a></th>
@@ -28,6 +29,7 @@
                   tooltip-template="{{system.systemName}} ({{system.security | numeraljs:'0.00'}}) {{system.regionName}}"
                   style="color:{{getSecurityColor(system.security)}}" class="route glyphicon glyphicon glyphicon-stop"
                   aria-hidden="true"></span></span></td>
+        <td>{{trade.routeTime | numeraljs:'00:00:00'}}</td>
         <td>{{trade.profitPerJump | numeraljs}}</td>
         <td>{{trade.profitPercent | numeraljs:'0.00%'}}</td>
         <td><a href="/#/orders?type={{trade.type.id}}" target="_blank">{{trade.type.name}}</a>

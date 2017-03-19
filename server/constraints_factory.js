@@ -14,7 +14,10 @@ const defaultConstraints = {
   fromSystemRadius: 0, // Radius (in jumps) from the 'fromSystems' array.
   toSystems: null, // Only
   minSecurity: 0, // Minimum security status of from/to system.
-  tax: 0.02 // Minimum security status of from/to system.
+  tax: 0.02, // Minimum security status of from/to system.
+  shipType: 'frigate', // Max ship speed (m/s)
+  maxWarpSpeed: 4.5, // MAx ship warp speed (au/s)
+  alignTime: 8, // Warp Align time
 };
 
 
@@ -36,7 +39,10 @@ function getConstraints(req) {
 }
 
 function isInteger(key) {
-  return key !== 'regions' && key !== 'fromSystems' && key !== 'toSystems';
+  return key !== 'regions'
+    && key !== 'fromSystems'
+    && key !== 'toSystems'
+    && key !== 'shipType';
 }
 /**
  *
