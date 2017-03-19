@@ -6,11 +6,25 @@ const log = require('../../logger');
 
 class CrestClient {
 
-  getAllMarketOrders(regionId) {
+  getAllMarketOrders(regionId, useCache = true) {
     const url = 'market/' + regionId + '/orders/all/';
-    return this.getDataPaged(url, consts.HOUR).then((data) => { 
-      return {data, regionId};
+    return this.getDataPaged(url, consts.HOUR, useCache).then((data) => {
+      return { data, regionId };
     });
+  }
+
+  getMarketOrdersForType(regionId, type, useCache = true) {
+    const sellUrl = `market/${regionId}/orders/sell/?type=https://crest-tq.eveonline.com/inventory/types/${type}/`;
+    const buyUrl = `market/${regionId}/orders/buy/?type=https://crest-tq.eveonline.com/inventory/types/${type}/`;
+    const p1 = this.getDataPaged(sellUrl, consts.MINUTE, useCache);
+    const p2 = this.getDataPaged(buyUrl, consts.MINUTE, useCache);
+    return Promise.all([p1, p2]).then((buyAndSellOrders) => {
+      return {
+        sellOrders: buyAndSellOrders[0],
+        buyOrders: buyAndSellOrders[1],
+        regionId
+      }
+    })
   }
 
   getRegions() {
@@ -39,8 +53,8 @@ class CrestClient {
   }
 
 
-  getData(relativeUrl, maxAge) {
-    return fileStore.get(relativeUrl, maxAge).then((data) => {
+  getData(relativeUrl, maxAge, useCache = true) {
+    return fileStore.get(relativeUrl, maxAge, useCache).then((data) => {
       if (data !== undefined && data !== null) {
         // log.debug('Found cached data for %s', relativeUrl);
         return JSON.parse(data);
@@ -61,8 +75,8 @@ class CrestClient {
     });
   }
 
-  getDataPaged(url, maxAge, allData = []) {
-    return this.getData(url, maxAge).then((data) => {
+  getDataPaged(url, maxAge, useCache, allData = []) {
+    return this.getData(url, maxAge, useCache).then((data) => {
       if (data == null) {
         return allData;
       }

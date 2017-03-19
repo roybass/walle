@@ -1,5 +1,6 @@
 const extend = require('extend');
 const trade = require('./server/trade');
+const orders = require('./server/orders');
 const regions = require('./static/regions');
 const systems = require('./static/systems');
 const routesCalc = require('./server/route_calculator');
@@ -26,6 +27,12 @@ routesCalc.init().then((routesCalculator) => {
       });
   });
 
+  app.get('/api/orders/:type', (req, res) => {
+    orders.findProfitableOrders(constraintsFactory.getConstraints(req), req.params['type'])
+      .then((ordersResult) => {
+        res.json(ordersResult);
+      });
+  });
   app.use('/api/regions', (req, res) => res.json(regions.getAllRegions()));
   app.use('/api/systems', (req, res) => res.json(systems.getAllSystems()));
   app.use('/', express.static('client'));
