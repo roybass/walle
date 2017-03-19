@@ -1,3 +1,5 @@
+const staData = require('../SDD_Ascension_201611140/staData');
+
 const stationsArr = [
   [60000004, 30002780, 'Muvolailen', 10000033, 'The Citadel', 0, 'Muvolailen X - Moon 3 - CBD Corporation Storage', 1000002, 'Unknown', '2011-01-18 18:54:09', '0000-00-00 00:00:00'],
   [60000007, 30002779, 'Ono', 10000033, 'The Citadel', 0, 'Ono V - Moon 9 - CBD Corporation Storage', 1000002, 'Unknown', '2011-01-18 18:54:09', '0000-00-00 00:00:00'],
@@ -6340,6 +6342,14 @@ for (const arr of stationsArr) {
     stationName: arr[6],
     corporationId: arr[7],
     corporationName: arr[8]
+  }
+
+  if (staData.tables.staStations.d.hasOwnProperty(arr[0])) {
+    stations[arr[0]].position = {
+      x: staData.tables.staStations.d[arr[0]][11],
+      y: staData.tables.staStations.d[arr[0]][12],
+      z: staData.tables.staStations.d[arr[0]][13]
+    };
   }
 }
 

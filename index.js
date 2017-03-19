@@ -14,7 +14,10 @@ const constraints = {
   fromSystemRadius: 2, // Radius (in jumps) from the 'fromSystems' array.
   toSystems: null,
   minSecurity: 0, // Minimum security status of from/to system.
-  tax: 0.02 // VAT..  usually 2%.
+  tax: 0.02, // VAT..  usually 2%.
+  maxSpeed: 150, // Max ship speed
+  maxWarpSpeed: 3, // Max ship warp speed
+  alignTime: 5 // Ship align time
 };
 
 

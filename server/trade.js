@@ -143,6 +143,7 @@ class TradeFinder {
         }
         trade.route = route;
         trade.jumps = route.length;
+        trade.routeTime = routesCalculator.getRouteTime(trade, constraints);
         trades.push(trade);
         break;
       }
@@ -164,7 +165,8 @@ class TradeFinder {
       name: station.stationName,
       region: station.regionName,
       system: station.systemName,
-      systemId: station.systemId
+      systemId: station.systemId,
+      position: station.position
     };
 
     let system = systems.findById(station.systemId);

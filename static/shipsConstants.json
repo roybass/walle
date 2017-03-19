@@ -1,0 +1,62 @@
+{
+  "titan": {
+    "acceleration": 1.36,
+    "deceleration": 0.5
+  },
+  "freighter": {
+    "acceleration": 1.36,
+    "deceleration": 0.5
+  },
+  "caps": {
+    "acceleration": 1.5,
+    "deceleration": 0.5
+  },
+  "battleship": {
+    "acceleration": 2,
+    "deceleration": 0.7
+  },
+  "battleship2": {
+    "acceleration": 2.2,
+    "deceleration": 0.7
+  },
+  "battlecruiser": {
+    "acceleration": 2.5,
+    "deceleration": 0.8
+  },
+  "capitalship": {
+    "acceleration": 2.75,
+    "deceleration": 0.9
+  },
+  "cruiser": {
+    "acceleration": 3,
+    "deceleration": 1
+  },
+  "industrial": {
+    "acceleration": 3,
+    "deceleration": 1
+  },
+  "cruiser2": {
+    "acceleration": 3.3,
+    "deceleration": 1.1
+  },
+  "destroyer": {
+    "acceleration": 4.5,
+    "deceleration": 1.5
+  },
+  "frigate": {
+    "acceleration": 5,
+    "deceleration": 1.7
+  },
+  "assaultfrigate": {
+    "acceleration": 5.5,
+    "deceleration": 1.8
+  },
+  "blockaderunner": {
+    "acceleration": 6,
+    "deceleration": 2
+  },
+  "interceptor": {
+    "acceleration": 8,
+    "deceleration": 2
+  }
+}
