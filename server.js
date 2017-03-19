@@ -28,7 +28,7 @@ routesCalc.init().then((routesCalculator) => {
   });
 
   app.get('/api/orders/:type', (req, res) => {
-    orders.findProfitableOrders(constraintsFactory.getConstraints(req), req.params['type'])
+    orders.findProfitableOrders(req.params['type'])
       .then((ordersResult) => {
         res.json(ordersResult);
       });

@@ -1,11 +1,12 @@
 const crest = require('./crest/crest');
 const sde = require('eve-online-sde');
+const regions = require('../static/regions');
 const logger = require('../logger');
 
 class OrdersFinder {
-  findProfitableOrders(constraints, type) {
+  findProfitableOrders(type) {
     const orderPromises = [];
-    for (const regionId of constraints.regions) {
+    for (const regionId of regions.getAllRegionIds()) {
       let p = crest.getMarketOrdersForType(regionId, type);
       orderPromises.push(p);
     }
