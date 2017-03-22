@@ -5,7 +5,7 @@
         <th><a href="" ng-click="setSortField('profit'); toggleOrder()">Profit (ISK)</a></th>
         <th style="min-width:100px"><a href="" ng-click="setSortField('jumps'); toggleOrder()">Route</a></th>
         <th><a href="" ng-click="setSortField('routeTime'); toggleOrder()">Travel Time</a></th>
-        <th><a href="" ng-click="setSortField('profitPerJump'); toggleOrder()">Profit / Jump</a></th>
+        <th><a href="" ng-click="setSortField('profitPerMinute'); toggleOrder()">Profit / Minute</a></th>
         <th><a href="" ng-click="setSortField('profitPercent'); toggleOrder()">Profit Margin</a></th>
         <th><a href="" ng-click="setSortField('type.name'); toggleOrder()">Item</a></th>
         <th><a href="" ng-click="setSortField('units'); toggleOrder()">Units</a></th>
@@ -18,11 +18,12 @@
 
     <tr ng-repeat="trade in trades | orderBy:sortField:sortOrder">
         <th>{{$index + 1}}</th>
-        <td tooltips tooltip-class="trade-tooltip"
+        <td> <span tooltips tooltip-class="trade-tooltip"
             tooltip-template="Buy: {{trade.buy.price * trade.units | numeraljs}} @ {{trade.buy.price | numeraljs}} ISK<br>
              Sell: {{trade.sell.price * trade.units | numeraljs}} @ {{trade.sell.price | numeraljs}} ISK<br>
              Tax: {{ 0.02 * trade.sell.price * trade.units | numeraljs}} ISK">
-            {{trade.profit | numeraljs}}
+                {{trade.profit | numeraljs}}     
+             </span>
         </td>
         <td>{{trade.jumps}} : <span ng-repeat="system in trade.route">
             <span tooltips
@@ -30,7 +31,8 @@
                   style="color:{{getSecurityColor(system.security)}}" class="route glyphicon glyphicon glyphicon-stop"
                   aria-hidden="true"></span></span></td>
         <td>{{trade.routeTime | numeraljs:'00:00:00'}}</td>
-        <td>{{trade.profitPerJump | numeraljs}}</td>
+        <td><span tooltips tooltip-template="{{trade.profitPerJump | numeraljs}} ISK per Jump">
+            {{trade.profitPerMinute | numeraljs}} </span></td>
         <td>{{trade.profitPercent | numeraljs:'0.00%'}}</td>
         <td><a href="/#/orders?type={{trade.type.id}}" target="_blank">{{trade.type.name}}</a>
         </td>

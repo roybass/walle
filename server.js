@@ -66,6 +66,7 @@ function formatTrade(t) {
     },
     profit: t.profit,
     profitPerJump: Math.floor(t.profit / t.jumps),
+    profitPerMinute: (t.profit / t.routeTime) * 60,
     profitPercent: t.profit / (t.tradeUnits * t.sellOrder.price),
     units: t.tradeUnits,
     jumps: t.jumps,
