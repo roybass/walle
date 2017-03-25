@@ -9,7 +9,7 @@ const defaultConstraints = {
   maxJumps: 10, // Max jumps
   maxCapacity: 5100, // Cubic meters available for hauling
   minProfit: 100000, // Minimum profit per trade (units * price diff)
-  regions: 'Metropolis, Heimatar, Derelik, Molden Heath', // Region names included in the search
+  regions: '', // Region names included in the search, comma delimited
   fromSystems: null,
   fromSystemRadius: 0, // Radius (in jumps) from the 'fromSystems' array.
   toSystems: null, // Only
@@ -50,17 +50,19 @@ function isInteger(key) {
  * @returns constraints.
  */
 function prepareConstraints(constraints) {
-  logger.info('Optimized contraints');
+  logger.info('Optimized constraints');
   const newConstraints = extend({}, constraints);
-  newConstraints.regions = constraints.regions.split(',').map((system) => regions.getId(system.trim()));
-  if (constraints.toSystems) {
-    newConstraints.toSystems = new Set(constraints.toSystems.split(',').map(name => {
-      const id = systems.nameToId(name.trim());
-      if (id === -1) {
-        throw Error('Unknown system ' + name.trim());
-      }
-      return id;
-    }));
+  if (constraints.regions) {
+    newConstraints.regions = constraints.regions.split(',').map((system) => regions.getId(system.trim()));
+    if (constraints.toSystems) {
+      newConstraints.toSystems = new Set(constraints.toSystems.split(',').map(name => {
+        const id = systems.nameToId(name.trim());
+        if (id === -1) {
+          throw Error('Unknown system ' + name.trim());
+        }
+        return id;
+      }));
+    }    
   }
   if (constraints.fromSystems) {
     newConstraints.fromSystems = constraints.fromSystems.split(',').map((name) => {
@@ -86,6 +88,7 @@ function prepareConstraints(constraints) {
     }
 
   }
+  logger.debug('Constraints : %j', newConstraints);
   return newConstraints;
 }
 

@@ -3,12 +3,15 @@ const sde = require('eve-online-sde');
 const logger = require('../logger');
 const stations = require('../static/stations');
 const systems = require('../static/systems');
+const regions = require('../static/regions');
 
 class TradeFinder {
 
   findTradesInRegions(constraints, routesCalculator) {
     const orderPromises = [];
-    for (const regionId of constraints.regions) {
+    const actualRegions = constraints.regions || regions.getAllRegionIds();
+    logger.info('Searching %d regions', actualRegions.length);
+    for (const regionId of actualRegions) {
       let p = crest.getAllMarketOrders(regionId);
       orderPromises.push(p);
     }
@@ -63,11 +66,14 @@ class TradeFinder {
       const typeId = buyEntry[0];
       const type = types[typeId];
       if (!type) {
-        continue;
+        continue; // Unknown type
+      }
+      if (type.volume > constraints.maxCapacity) {
+        continue; // Single unit is larger than capacity.
       }
       const buyOrdersArr = buyEntry[1];
       if (!sellOrders.has(typeId)) {
-        continue;
+        continue; // No sell orders
       }
       const sellOrdersArr = sellOrders.get(typeId);
 

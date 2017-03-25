@@ -1,6 +1,6 @@
 walleApp.component('orders', {
     templateUrl: 'templates/orders.html',
-    controller: function OrdersController($scope, $http, $route) {
+    controller: function OrdersController($scope, $http, $route, $location, $anchorScroll) {
 
       const typeId = $route.current.params['type'];
 
@@ -40,8 +40,14 @@ walleApp.component('orders', {
       };
 
       $scope.diffToNow = function (item) {
-        console.log(item);
+        
       };
+
+      $scope.scrollTo = function(place) {
+        $location.hash(place);
+        $anchorScroll();
+      }
+
     }
   }
 ).filter('diffToNow', () => {

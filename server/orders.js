@@ -1,6 +1,7 @@
 const crest = require('./crest/crest');
 const sde = require('eve-online-sde');
 const regions = require('../static/regions');
+const stations = require('../static/stations');
 const logger = require('../logger');
 
 class OrdersFinder {
@@ -26,6 +27,17 @@ class OrdersFinder {
 
       buyOrders.sort((left, right) => right.price - left.price);
       sellOrders.sort((left, right) => left.price - right.price);
+
+      const stationToRegion = (item) => {
+        const station = stations[item.location.id];
+        logger.debug('station ' + station);
+        if (station) {
+          item.region = station.regionName;
+        }
+      }
+
+      buyOrders.forEach(stationToRegion);
+      sellOrders.forEach(stationToRegion);
       return {
         sellOrders,
         buyOrders
