@@ -18,7 +18,8 @@
     "numeral": "^2.0.4",
     "read-each-line-sync": "^1.0.4",
     "request": "^2.79.0",
-    "request-promise": "^4.1.1"
+    "request-promise": "^4.1.1",
+    "xml-parser": "^1.2.1"
   },
   "author": "",
   "license": "ISC"
