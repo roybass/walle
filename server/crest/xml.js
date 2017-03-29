@@ -50,7 +50,4 @@ class XmlClient {
   }
 }
 
-new XmlClient().getSystemStats().then((stats) => {
-  console.log(stats);
-});
 module.exports = new XmlClient();

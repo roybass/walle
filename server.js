@@ -4,6 +4,7 @@ const orders = require('./server/orders');
 const regions = require('./static/regions');
 const systems = require('./static/systems');
 const routesCalc = require('./server/route_calculator');
+const xmlApi = require('./server/crest/xml');
 const constraintsFactory = require('./server/constraints_factory');
 const logger = require('./logger');
 const express = require('express');
@@ -23,7 +24,12 @@ routesCalc.init().then((routesCalculator) => {
   app.get('/api/bestTrades', (req, res)  => {
     trade.findTradesInRegions(constraintsFactory.getConstraints(req), routesCalculator)
       .then((routes) => {
-        res.json(routes.map(formatTrade));
+        xmlApi.getSystemStats().then((stats) => {
+          res.json(routes.map((t) => {
+            return formatTrade(t, stats);
+          }));
+        });
+
       });
   });
 
@@ -44,7 +50,7 @@ routesCalc.init().then((routesCalculator) => {
 });
 
 
-function formatTrade(t) {
+function formatTrade(t, stats) {
   if (t === undefined) {
     return {};
   }
@@ -73,10 +79,12 @@ function formatTrade(t) {
     routeTime: t.routeTime,
     route: t.route.map((systemId) => {
       const system = systems.findById(systemId);
+      const systemStats = stats[systemId];
       return {
         systemName: system.systemName,
         regionName: system.regionName,
-        security: system.security
+        security: system.security,
+        stats: systemStats
       }
     }),
     totalVolume: t.type ? t.tradeUnits * t.type.volume : 'N/A'

@@ -19,7 +19,7 @@
     <tr ng-repeat="trade in trades | orderBy:sortField:sortOrder">
         <th>{{$index + 1}}</th>
         <td> <span tooltips tooltip-class="trade-tooltip"
-            tooltip-template="Buy: {{trade.buy.price * trade.units | numeraljs}} @ {{trade.buy.price | numeraljs}} ISK<br>
+                   tooltip-template="Buy: {{trade.buy.price * trade.units | numeraljs}} @ {{trade.buy.price | numeraljs}} ISK<br>
              Sell: {{trade.sell.price * trade.units | numeraljs}} @ {{trade.sell.price | numeraljs}} ISK<br>
              Tax: {{ 0.02 * trade.sell.price * trade.units | numeraljs}} ISK">
                 {{trade.profit | numeraljs}}     
@@ -27,7 +27,8 @@
         </td>
         <td>{{trade.jumps}} : <span ng-repeat="system in trade.route">
             <span tooltips
-                  tooltip-template="{{system.systemName}} ({{system.security | numeraljs:'0.00'}}) {{system.regionName}}"
+                  tooltip-template="{{system.systemName}} ({{system.security | numeraljs:'0.00'}})
+                  {{system.stats.podKills > 0 ? system.stats.podKills + ' Pods' : ''}} {{system.regionName}}"
                   style="color:{{getSecurityColor(system.security)}}" class="route glyphicon glyphicon glyphicon-stop"
                   aria-hidden="true"></span></span></td>
         <td>{{trade.routeTime | numeraljs:'00:00:00'}}</td>
