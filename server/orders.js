@@ -30,11 +30,10 @@ class OrdersFinder {
 
       const stationToRegion = (item) => {
         const station = stations[item.location.id];
-        logger.debug('station ' + station);
         if (station) {
           item.region = station.regionName;
         }
-      }
+      };
 
       buyOrders.forEach(stationToRegion);
       sellOrders.forEach(stationToRegion);

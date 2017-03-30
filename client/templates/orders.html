@@ -7,6 +7,9 @@
         Show all
     </label>
 
+    <div google-chart chart="buyChart" style="display:inline-block; height:600px; width:40%;"></div>
+    <div google-chart chart="sellChart" style="display:inline-block; height:600px; width:40%;"></div>
+
     <a id="sellOrders"></a>
     <h2>Sell orders (<a ng-click="scrollTo('buyOrders');">Buy Orders</a>) </h2>
     <table ng-show="orders.sellOrders.length > 0" class="table table-striped table-hover" ng-if="!loader">

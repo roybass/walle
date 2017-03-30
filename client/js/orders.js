@@ -17,10 +17,12 @@ walleApp.component('orders', {
           if ($scope.orders.buyOrders.length) {
             $scope.highestBuyOrder = $scope.orders.buyOrders[0].price;
             $scope.type = $scope.orders.buyOrders[0].type;
+            $scope.buyChart.data = getChartData($scope.orders.buyOrders, 0.0, 0.95);
           }
           if ($scope.orders.sellOrders.length) {
             $scope.lowestSellOrder = $scope.orders.sellOrders[0].price;
             $scope.type = $scope.orders.buyOrders[0].type;
+            $scope.sellChart.data = getChartData($scope.orders.sellOrders, 0.0, 0.95);
           }
           $scope.loader = false;
         });
@@ -40,14 +42,46 @@ walleApp.component('orders', {
       };
 
       $scope.diffToNow = function (item) {
-        
+
       };
 
-      $scope.scrollTo = function(place) {
+      $scope.scrollTo = function (place) {
         $location.hash(place);
         $anchorScroll();
-      }
+      };
 
+
+      $scope.sellChart = {};
+      $scope.sellChart.type = "Histogram";
+      $scope.sellChart.data = [
+        ['Label', 'Price']
+      ];
+
+      $scope.sellChart.options = {
+        'title': 'Sell Prices'
+      };
+
+      $scope.buyChart = {};
+      $scope.buyChart.type = "Histogram";
+      $scope.buyChart.data = [
+        ['Label', 'Price']
+      ];
+
+      $scope.buyChart.options = {
+        'title': 'Buy Prices'
+      };
+
+      getChartData = function(orders, startPercentile = 0.0, endPercentile = 1.0) {
+        var chartData = [
+          ['Label', 'Price']
+        ];
+        var startIndex = Math.floor(orders.length * startPercentile);
+        var endIndex = Math.floor(orders.length * endPercentile);
+        for (var i = startIndex; i < endIndex; i++) {
+          chartData.push(['', orders[i].price]);
+        }
+        return chartData;
+      }
     }
   }
 ).filter('diffToNow', () => {

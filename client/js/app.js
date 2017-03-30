@@ -1,4 +1,4 @@
-var walleApp = angular.module('walleApp', ['ngRoute', 'ngTagsInput', 'ngNumeraljs', '720kb.tooltips']);
+var walleApp = angular.module('walleApp', ['ngRoute', 'ngTagsInput', 'ngNumeraljs', '720kb.tooltips', 'googlechart']);
 
 walleApp.controller('MainController', ($scope, $route, $routeParams, $location) => {
   $scope.$route = $route;
