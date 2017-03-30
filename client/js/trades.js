@@ -53,5 +53,9 @@ walleApp.component('trades', {
       if (security >= 0.1) return '#F00000';
       return '#F00000';
     };
+
+    $scope.getStatsSize = function(podKills) {
+      return Math.min(14, 8 + 1 * (podKills || 0)); 
+    }
   }
 });

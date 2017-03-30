@@ -21,15 +21,18 @@
         <td> <span tooltips tooltip-class="trade-tooltip"
                    tooltip-template="Buy: {{trade.buy.price * trade.units | numeraljs}} @ {{trade.buy.price | numeraljs}} ISK<br>
              Sell: {{trade.sell.price * trade.units | numeraljs}} @ {{trade.sell.price | numeraljs}} ISK<br>
-             Tax: {{ 0.02 * trade.sell.price * trade.units | numeraljs}} ISK">
+             Tax: {{ 0.02 * trade.slel.price * trade.units | numeraljs}} ISK">
                 {{trade.profit | numeraljs}}     
              </span>
         </td>
         <td>{{trade.jumps}} : <span ng-repeat="system in trade.route">
             <span tooltips
-                  tooltip-template="{{system.systemName}} ({{system.security | numeraljs:'0.00'}})
-                  {{system.stats.podKills > 0 ? system.stats.podKills + ' Pods' : ''}} {{system.regionName}}"
-                  style="color:{{getSecurityColor(system.security)}}" class="route glyphicon glyphicon glyphicon-stop"
+                  tooltip-template="<div>{{system.systemName}} ({{system.security | numeraljs:'0.00'}}) </div>
+                  <div>{{system.stats.podKills > 0 ? system.stats.podKills + ' Pods' : ''}}</div> 
+                  <div>{{system.regionName}}</div>"
+                  style="color:{{getSecurityColor(system.security)}}; 
+                  {{system.stats.podKills > 0 ? 'text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;' : ''}}"
+                  class="route glyphicon glyphicon glyphicon-stop"
                   aria-hidden="true"></span></span></td>
         <td>{{trade.routeTime | numeraljs:'00:00:00'}}</td>
         <td><span tooltips tooltip-template="{{trade.profitPerJump | numeraljs}} ISK per Jump">

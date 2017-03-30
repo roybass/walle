@@ -79,7 +79,7 @@ function formatTrade(t, stats) {
     routeTime: t.routeTime,
     route: t.route.map((systemId) => {
       const system = systems.findById(systemId);
-      const systemStats = stats[systemId];
+      const systemStats = stats[systemId] || { solarSystemID: systemId.toString(),  shipKills : 0, factionKills : 0, podKills : 0 };
       return {
         systemName: system.systemName,
         regionName: system.regionName,
