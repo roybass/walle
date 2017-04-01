@@ -5,45 +5,46 @@ const jumps = require('../static/jumps');
 const logger = require('../logger');
 
 const defaultConstraints = {
-  maxCash: 30000000, // Max available cash for trading
-  maxJumps: 10, // Max jumps
-  maxCapacity: 5100, // Cubic meters available for hauling
-  minProfit: 100000, // Minimum profit per trade (units * price diff)
-  regions: '', // Region names included in the search, comma delimited
-  fromSystems: null,
-  fromSystemRadius: 0, // Radius (in jumps) from the 'fromSystems' array.
-  toSystems: null, // Only
-  minSecurity: 0, // Minimum security status of from/to system.
-  tax: 0.02, // Minimum security status of from/to system.
-  shipType: 'frigate', // Max ship speed (m/s)
-  maxWarpSpeed: 4.5, // MAx ship warp speed (au/s)
-  alignTime: 8, // Warp Align time
+  maxCash: { defaultValue : '30000000', parseFunc : parseInt }, // Max available cash for trading
+  maxJumps: { defaultValue : '10', parseFunc : parseInt }, // Max jumps
+  maxCapacity: { defaultValue : '5100', parseFunc : parseInt }, // Cubic meters available for hauling
+  minProfit: { defaultValue : '100000', parseFunc : parseInt }, // Minimum profit per trade (units * price diff)
+  regions: { defaultValue : ''}, // Region names included in the search, comma delimited
+  fromSystems: { defaultValue : null},
+  fromSystemRadius: { defaultValue : '0', parseFunc : parseInt }, // Radius (in jumps) from the 'fromSystems' array.
+  toSystems: { defaultValue : null}, // Only
+  minSecurity: { defaultValue : '0.0', parseFunc : parseFloat }, // Minimum security status of from/to system.
+  tax: { defaultValue : '0.02', parseFunc : parseFloat }, // Minimum security status of from/to system.
+  shipType: { defaultValue : 'frigate' }, // Max ship speed (m/s)
+  maxWarpSpeed: { defaultValue : '4.5', parseFunc : parseFloat }, // MAx ship warp speed (au/s)
+  alignTime: { defaultValue : '8', parseFunc : parseFloat }, // Warp Align time
+  avoidLowSec: { defaultValue : 'true', parseFunc : parseBoolean }
 };
 
+function parseBoolean(value) {
+  return value == 'true';
+}
 
 /**
  *
  * @param req Express request.
  */
 function getConstraints(req) {
-  const constraints = extend({}, defaultConstraints);
+  const constraints = {};
+
   for (const key in defaultConstraints) {
     if (!defaultConstraints.hasOwnProperty(key)) {
       continue;
     }
-    if (req.query[key]) {
-      constraints[key] = isInteger(key) ? parseInt(req.query[key]) : req.query[key];
-    }
+    // get value from request or default value
+    let value = req.query[key] || defaultConstraints[key].defaultValue;
+
+    // Parse the value if we have a parsing function
+    constraints[key] = defaultConstraints[key].parseFunc ? defaultConstraints[key].parseFunc(value) : value;
   }
   return prepareConstraints(constraints);
 }
 
-function isInteger(key) {
-  return key !== 'regions'
-    && key !== 'fromSystems'
-    && key !== 'toSystems'
-    && key !== 'shipType';
-}
 /**
  *
  * @param constraints

@@ -143,7 +143,7 @@ class TradeFinder {
       }
       potentialTrades.sort((a, b) => b.profit - a.profit);
       for (let trade of potentialTrades) {
-        const route = routesCalculator.getRoute(trade.sellOrder.station.systemId, trade.buyOrder.station.systemId, true);
+        const route = routesCalculator.getRoute(trade.sellOrder.station.systemId, trade.buyOrder.station.systemId, constraints.avoidLowSec);
         if (route.length > constraints.maxJumps) {
           continue;
         }

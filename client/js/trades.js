@@ -25,7 +25,7 @@ walleApp.component('trades', {
       var url = '/api/bestTrades';
       var query = [];
       for (var key in args) {
-        if (!args.hasOwnProperty(key) || !args[key]) {
+        if (!args.hasOwnProperty(key) || args[key] == null) {
           continue;
         }
         query.push(key + '=' + args[key]);

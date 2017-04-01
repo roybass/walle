@@ -13,7 +13,8 @@ walleApp.component('constraints', {
       minSecurity: params['minSecurity'] || 0, // Minimum security status of from/to system.
       shipType: params['shipType'] || 'frigate',
       maxWarpSpeed: params['maxWarpSpeed'] || 4.5,
-      alignTime: params['alignTime'] || 8
+      alignTime: params['alignTime'] || 8,
+      avoidLowSec : params['avoidLowSec'] || true
     };
 
     $scope.refresh = function () {
