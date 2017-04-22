@@ -119,6 +119,9 @@ class RouteCalculatorWithCache {
     const gate = 8;
     const k = this.shipsConstants[constraints.shipType];
     let duration = 0;
+    if (!sPos || !dPos) {
+      return duration;
+    }
 
     const totalDistance = Math.sqrt( Math.pow((dPos.x - sPos.x), 2) + Math.pow((dPos.y - sPos.y), 2) + Math.pow((dPos.z - sPos.z), 2) );
     const accelerationTime = Math.log((warpSpeed * auToMeter) / k.acceleration) / k.acceleration;
