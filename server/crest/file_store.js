@@ -59,6 +59,7 @@ class FileStore {
         return fsp.emptyDir(folder).then(() => folder);
       })
       .then((folder) => {
+        cache.set(key, data);
         const now = new Date().getTime();
         const fileName = folder + '/' + now;
         return fsp.writeFile(fileName, data).then(() => fileName);
