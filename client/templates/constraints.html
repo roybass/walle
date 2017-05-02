@@ -3,7 +3,7 @@
         <div class="form-group row">
             <label class="col-sm-2 col-form-label">Regions</label>
 
-            <div class="col-sm-10">
+            <div class="col-sm-8">
 
                 <tags-input id="regionsSelect" class="bootstrap" ng-model="regions" min-tags="1" add-from-autocomplete-only="true"
                             add-on-paste="true" replace-spaces-with-dashes="false" placeholder="Add a region">
@@ -13,7 +13,7 @@
         </div>
         <div class="form-group row">
             <label class="col-sm-2 col-form-label">From Systems</label>
-            <tags-input id="fromSystems" class="bootstrap col-sm-10" ng-model="systems" min-tags="1"
+            <tags-input id="fromSystems" class="bootstrap col-sm-8" ng-model="systems" min-tags="1"
                         add-from-autocomplete-only="true" add-on-paste="true" replace-spaces-with-dashes="false" placeholder="Add a system">
                 <auto-complete source="allSystems($query)" min-length="2"></auto-complete>
             </tags-input>
@@ -62,6 +62,18 @@
             <div class="col-sm-2">
                 <input class="form-control" ng-model="constraints.maxJumps" id="maxJumps">
             </div>
+            <div class="col-sm-1 pull-right">
+                <button type="submit" class="btn btn-primary pull-right" ng-click="saveFile()">
+                    <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                </button>
+            </div>
+
+            <div class="col-sm-1 pull-right">
+                <button type="submit" class="btn btn-primary pull-right" ng-click="loadFile()">
+                    <span class="glyphicon glyphicon-open" aria-hidden="true"></span>
+                </button>
+            </div>
+
         </div>
 
         <div class="form-group row">

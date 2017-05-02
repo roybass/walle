@@ -5,6 +5,7 @@ const jumps = require('../static/jumps');
 const logger = require('../logger');
 
 const defaultConstraints = {
+  maxTrades: { defaultValue : '30', parseFunc : parseInt },
   maxCash: { defaultValue : '30000000', parseFunc : parseInt }, // Max available cash for trading
   maxJumps: { defaultValue : '10', parseFunc : parseInt }, // Max jumps
   maxCapacity: { defaultValue : '5100', parseFunc : parseInt }, // Cubic meters available for hauling

@@ -158,7 +158,7 @@ class TradeFinder {
     logger.info('%d station pairs', pairs.size);
     trades.sort((left, right) => right.profit - left.profit);
 
-    return trades;
+    return trades.slice(0, constraints.maxTrades);
 
   }
 

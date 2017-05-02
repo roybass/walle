@@ -1,6 +1,6 @@
 walleApp.component('constraints', {
   templateUrl: 'templates/constraints.html',
-  controller: function ConstraintsController($scope, $http, $route) {
+  controller: function ConstraintsController($scope, $http, $route, FileDialog) {
 
     const params = $route.current.params;
 
@@ -19,8 +19,8 @@ walleApp.component('constraints', {
 
     $scope.refresh = function () {
       console.log("Emitting refresh");
-      $scope.constraints.regions = $scope.regions.map((item) => item.text).join(',');
-      $scope.constraints.fromSystems = $scope.systems.map((item) => item.text).join(',');
+      $scope.constraints.regions = fromTagsInput($scope.regions);
+      $scope.constraints.fromSystems = fromTagsInput($scope.systems);
       //  $route.updateParams($scope.constraints);
       $scope.$parent.$emit('refresh', $scope.constraints);
     };
@@ -44,17 +44,66 @@ walleApp.component('constraints', {
         });
       });
     };
-    $scope.regions = (params['regions'] || 'Metropolis, Heimatar, Derelik, Model Heath').split(',').map((item) => {
-      return {
-        text: item
-      }
-    });
+    $scope.regions = toTagsInput(params['regions'] || 'Metropolis, Heimatar, Derelik, Model Heath');
+    $scope.systems = toTagsInput(params['systems'] || 'Rens');
 
-    $scope.systems = (params['systems'] || 'Rens').split(',').map((item) => {
-      return {
-        text: item
+    function toTagsInput(str) {
+      if (!str) {
+        return null;
       }
-    });
+      return str.split(',').map((item) => {
+        return {
+          text: item
+        }
+      })
+    }
+
+    function fromTagsInput(input) {
+      if (!input) {
+        return '';
+      }
+      return input.map((item) => item.text).join(',');
+    }
+
+    $scope.loadFile = function() {
+      FileDialog.open({}, function(file) {
+        var reader = new FileReader();
+        reader.onload = function(data) {
+          console.log(data.target.result);
+          var newConstraints = JSON.parse(data.target.result);
+          $scope.$apply(function() {
+            $scope.constraints = newConstraints;
+            $scope.regions = toTagsInput(newConstraints.regions);
+            $scope.systems = toTagsInput(newConstraints.fromSystems);
+          });
+          
+        }
+        reader.readAsText(file);
+      });
+    }
+
+    $scope.saveFile = function() {
+      console.log("Saving to file");
+      $scope.constraints.regions = fromTagsInput($scope.regions);
+      $scope.constraints.fromSystems = fromTagsInput($scope.systems);
+
+      $scope.download('walle.json', JSON.stringify($scope.constraints));
+    }
+
+    $scope.download = function(filename, text) {
+      var pom = document.createElement('a');
+      pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+      pom.setAttribute('download', filename);
+
+      if (document.createEvent) {
+          var event = document.createEvent('MouseEvents');
+          event.initEvent('click', true, true);
+          pom.dispatchEvent(event);
+      }
+      else {
+          pom.click();
+      }
+    }
 
     $scope.shipTypes = [
       { id: 'titan', label: 'Titan' },
@@ -74,4 +123,5 @@ walleApp.component('constraints', {
       { id: 'cruiser2', label: 'Cruiser II' }
     ];
   }
+
 });
