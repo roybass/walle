@@ -42,7 +42,9 @@ walleApp.component('orders', {
       };
 
       $scope.diffToNow = function (item) {
-
+        const issuedDate = new Date(item + 'Z');
+        const difference = moment().diff(issuedDate);
+        return moment.duration(difference).humanize();
       };
 
       $scope.scrollTo = function (place) {

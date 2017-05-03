@@ -21,7 +21,7 @@
             <th>Amount</th>
             <th>Region</th>
             <th>Location</th>
-            <th>Issued</th>
+            <th>Age</th>
         </tr>
         </thead>
         <tbody>
@@ -33,7 +33,7 @@
             <td>{{order.volume | numeraljs}} <span ng-if="order.minVolume > 1"> (Min: {{order.minVolume | numeraljs}})</span></td>
             <td>{{order.region}}</td>
             <td>{{order.location.name}}</td>
-            <td>{{order.issued}}</td>
+            <td>{{diffToNow(order.issued)}}</td>
         </tr>
         </tbody>
     </table>
@@ -50,7 +50,7 @@
             <th>Amount</th>
             <th>Region</th>
             <th>Location</th>
-            <th>Issued</th>
+            <th>Age</th>
         </tr>
         </thead>
         <tbody>
@@ -62,7 +62,7 @@
             <td>{{order.volume | numeraljs}} <span ng-if="order.minVolume > 1"> (Min: {{order.minVolume | numeraljs}})</span></td>
             <td>{{order.region}}</td>
             <td>{{order.location.name}}</td>
-            <td>{{order.issued}}</td>
+            <td>{{diffToNow(order.issued)}}</td>
 
         </tr>
         </tbody>
