@@ -83,7 +83,7 @@ class CrestClient {
       allData.push(data);
       if (data.next) {
         const nextUrl = this.getNextRelativeUrl(data.next);
-        return this.getDataPaged(nextUrl, maxAge, allData);
+        return this.getDataPaged(nextUrl, maxAge, useCache, allData);
       }
       return allData;
     });
