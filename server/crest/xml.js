@@ -8,9 +8,9 @@ const log = require('../../logger');
 
 class XmlClient {
 
-  getSystemStats() {
+  getSystemStats(useCache = true) {
     const url = "map/kills.xml.aspx";
-    return this.getData(url, 10 * consts.MINUTE, true).then((result => {
+    return this.getData(url, 10 * consts.MINUTE, useCache).then((result => {
       if (!result) {
         return null;
       }

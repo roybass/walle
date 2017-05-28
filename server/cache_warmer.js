@@ -1,5 +1,6 @@
 const regions = require('../static/regions');
 const crest = require('./crest/crest');
+const xmlClient = require('./crest/xml');
 const logger = require('../logger');
 
 const DELAY = 15 * 60 * 1000;
@@ -19,12 +20,12 @@ function refresh() {
   for (let region of allRegions) {
     p = p.then(() => crest.getAllMarketOrders(region, false));
   }
-  p.then(() => {
+  p = p.then(() => xmlClient.getSystemStats(false));
+  return p.then(() => {
     const endTime = new Date().getTime();
     logger.info("Finished updating all market data in %d seconds", (endTime - startTime) / 1000);
     running = false;
   });
-  return p;
 }
 
 setInterval(refresh, DELAY);
