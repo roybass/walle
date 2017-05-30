@@ -21,7 +21,7 @@
         <td> <span tooltips tooltip-class="trade-tooltip"
                    tooltip-template="Buy: {{trade.buy.price * trade.units | numeraljs}} @ {{trade.buy.price | numeraljs}} ISK<br>
              Sell: {{trade.sell.price * trade.units | numeraljs}} @ {{trade.sell.price | numeraljs}} ISK<br>
-             Tax: {{ 0.02 * trade.slel.price * trade.units | numeraljs}} ISK">
+             Tax: {{ 0.02 * trade.sell.price * trade.units | numeraljs}} ISK">
                 {{trade.profit | numeraljs}}     
              </span>
         </td>
