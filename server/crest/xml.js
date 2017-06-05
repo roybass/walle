@@ -11,7 +11,8 @@ class XmlClient {
   getSystemStats(useCache = true) {
     const url = "map/kills.xml.aspx";
     return this.getData(url, 10 * consts.MINUTE, useCache).then((result => {
-      if (!result) {
+      if (!result || !result.root) {
+        log.warn('No result found in kill stats');
         return null;
       }
       const rows = result.root.children[1].children[0];
