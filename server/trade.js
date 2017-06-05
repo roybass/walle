@@ -4,6 +4,7 @@ const logger = require('../logger');
 const stations = require('../static/stations');
 const systems = require('../static/systems');
 const regions = require('../static/regions');
+const Progress = require('./progress');
 
 class TradeFinder {
 
@@ -21,7 +22,6 @@ class TradeFinder {
     return Promise.all(orderPromises).then((ordersPerRegion) => {
       for (const regionOrders of ordersPerRegion) {
         // regionOrders is paged, so it's an array as well.
-        logger.debug('%d pages found for %s', regionOrders.data.length, regionOrders.regionId);
         this.addOrders(regionOrders.data, buyOrders, sellOrders);
       }
       logger.debug("Added sell orders for %d types", sellOrders.size);
@@ -62,7 +62,11 @@ class TradeFinder {
     const pairs = new Set();
     const trades = [];
     let all = 0;
+    const mainProgress = new Progress(buyOrders.size);
+    mainProgress.onProgress([0.25, 0.5, 0.75, 0.95], (v) => logger.debug('%d % done', (v * 100)));
+
     for (const buyEntry of buyOrders) {
+      mainProgress.inc();
       const typeId = buyEntry[0];
       const type = types[typeId];
       if (!type) {
