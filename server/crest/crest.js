@@ -4,6 +4,8 @@ const crestBaseUrl = 'https://crest-tq.eveonline.com/';
 const consts = require('./../const');
 const log = require('../../logger');
 
+
+const timeout = 30000;
 class CrestClient {
 
   getAllMarketOrders(regionId, useCache = true) {
@@ -61,13 +63,14 @@ class CrestClient {
       }
       const url = crestBaseUrl + relativeUrl;
       log.debug('No cache found. Request data from %s', url);
-      return rp(url).then((response) => {
+      return rp({url, timeout}).then((response) => {
         if (!response) {
           log.warn('Error getting data from %s', url);
         }
         const data = response ? response : '{}';
         return fileStore.set(relativeUrl, response).then(() => JSON.parse(response));
       }).catch((err) => {
+        log.warn('Error getting data for ' + relativeUrl + ': ', err);
         return fileStore.set(relativeUrl, '{}').then(() => {
           return {};
         });

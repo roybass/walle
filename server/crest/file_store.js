@@ -14,8 +14,9 @@ class FileStore {
     }
     const valueFromMem = cache.get(key);
     if (valueFromMem) {
-      logger.debug("Found %s in memory cache", key);
-      return Promise.resolve(valueFromMem);
+      const ageInMinutes = Math.floor((new Date().getTime() - valueFromMem.time) / 1000 / 60);
+      logger.debug("Found %s in memory cache. Data is %d minutes old.", key, ageInMinutes);
+      return Promise.resolve(valueFromMem.data);
     }
     const actualMaxAge = maxAge | defaultMaxAge;
     return this.getFolder(key)
@@ -46,7 +47,7 @@ class FileStore {
         }
         return fsp.readFile(res.folder + '/' + maxTime).then((buffer) => {
           let data = buffer.toString();
-          cache.set(key, data);
+          cache.set(key, {data: data, time: maxTime});
           logger.debug("Found %s in file store", key);
           return data;
         });
@@ -59,8 +60,8 @@ class FileStore {
         return fsp.emptyDir(folder).then(() => folder);
       })
       .then((folder) => {
-        cache.set(key, data);
         const now = new Date().getTime();
+        cache.set(key, {data: data, time: now});
         const fileName = folder + '/' + now;
         return fsp.writeFile(fileName, data).then(() => fileName);
       });
