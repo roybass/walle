@@ -42,8 +42,8 @@
         </td>
         <td>{{trade.units | numeraljs}}</td>
         <td>{{trade.totalVolume | numeraljs:'0.0'}}</td>
-        <td>{{trade.buy.station.name}}</td>
-        <td>{{trade.sell.station.name}}</td>
+        <td><span tooltips tooltip-template="{{trade.buy.station.region}}">{{trade.buy.station.name}}</span></td>
+        <td><span tooltips tooltip-template="{{trade.sell.station.region}}">{{trade.sell.station.name}}</span></td>
     </tr>
     </tbody>
 </table>
