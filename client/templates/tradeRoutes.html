@@ -1,0 +1,73 @@
+<form>
+    <div class="container">
+        <div class="form-group row">
+            <label for="fromSytem" class="col-sm-2 col-form-label">From System</label>
+
+            <div class="col-sm-2">
+                <select class="form-control" ng-model="constraints.fromSystem" id="fromSytem">
+                    <option ng-repeat="s in systems()" value="{{s.id}}">{{s.name}}</option>
+                </select>
+            </div>
+
+            <label for="toSytem" class="col-sm-2 col-form-label">To System</label>
+            <div class="col-sm-2">
+                <select class="form-control" ng-model="constraints.toSystem" id="toSytem" >
+                    <option ng-repeat="s in systems()" value="{{s.id}}">{{s.name}}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+
+            <label for="maxCash" class="col-sm-2 col-form-label">Cash</label>
+            <div class="col-sm-2">
+                <input class="form-control" ng-model="constraints.maxCash" id="maxCash">
+            </div>
+
+            <label for="maxCapacity" class="col-sm-2 col-form-label">Cargo Capacity</label>
+            <div class="col-sm-2">
+                <input class="form-control" ng-model="constraints.maxCapacity" id="maxCapacity">
+            </div>
+
+            <div class="col-sm-1">
+                <button type="submit" class="btn btn-primary pull-right" ng-click="refresh()">Go!</button>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+
+<table ng-show="trades.length > 0" class="table table-striped table-hover" ng-if="!loader">
+    <thead class="thead-inverse">
+    <tr>
+        <th>#</th>
+        <th><a href="" ng-click="setSortField('profit'); toggleOrder()">Profit (ISK)</a></th>
+        <th><a href="" ng-click="setSortField('profitPerM3'); toggleOrder()">Profit / M3</a></th>
+        <th><a href="" ng-click="setSortField('profitPercent'); toggleOrder()">Profit Margin</a></th>
+        <th><a href="" ng-click="setSortField('type.name'); toggleOrder()">Item</a></th>
+        <th><a href="" ng-click="setSortField('units'); toggleOrder()">Units</a></th>
+        <th><a href="" ng-click="setSortField('totalVolume'); toggleOrder()">Volume</a></th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr ng-repeat="trade in trades | orderBy:sortField:sortOrder">
+        <th>{{$index + 1}}</th>
+        <td> <span tooltips tooltip-class="trade-tooltip"
+                   tooltip-template="Buy: {{trade.buy.price * trade.units | numeraljs}} @ {{trade.buy.price | numeraljs}} ISK<br>
+             Sell: {{trade.sell.price * trade.units | numeraljs}} @ {{trade.sell.price | numeraljs}} ISK<br>
+             Tax: {{ 0.02 * trade.sell.price * trade.units | numeraljs}} ISK">
+                {{trade.profit | numeraljs}}     
+             </span>
+        </td>
+        <td>{{trade.profitPerM3 | numeraljs}} </span></td>
+        <td>{{trade.profitPercent | numeraljs:'0.00%'}}</td>
+        <td><a href="/#/orders?type={{trade.type.id}}" target="_blank">{{trade.type.name}}</a></td>
+        <td>{{trade.units | numeraljs}}</td>
+        <td>{{trade.totalVolume | numeraljs:'0.0'}}</td>
+    </tr>
+    </tbody>
+</table>
+<img ng-if="loader" src="http://bestanimations.com/Music/Dancers/happy-dance/happy-dance-animated-gif-image-1-2.gif"
+     class="img-responsive center-block"/>

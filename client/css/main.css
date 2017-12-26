@@ -6,3 +6,17 @@
 .trade-tooltip {
     width: 200px;
 }
+
+.buyOrders.table-striped>tbody>tr:nth-child(even) {
+	background-color: #f4fff4;
+}
+
+.sellOrders.table-striped>tbody>tr:nth-child(even) {
+	background-color: #fff4f4;
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}

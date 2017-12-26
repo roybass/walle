@@ -22,6 +22,16 @@ const defaultConstraints = {
   avoidLowSec: { defaultValue : 'true', parseFunc : parseBoolean }
 };
 
+const defaultConstraintsForTradeRoute = {
+  maxTrades: { defaultValue : '200', parseFunc : parseInt },
+  maxCash: { defaultValue : '30000000', parseFunc : parseInt }, // Max available cash for trading
+  maxCapacity: { defaultValue : '5100', parseFunc : parseInt }, // Cubic meters available for hauling
+  fromSystem: { defaultValue : null, parseFunc : parseInt},
+  toSystem: { defaultValue : null, parseFunc : parseInt}, // Only
+  tax: { defaultValue : '0.02', parseFunc : parseFloat }, // Minimum security status of from/to system.
+};
+
+
 function parseBoolean(value) {
   return value == 'true';
 }
@@ -44,6 +54,26 @@ function getConstraints(req) {
     constraints[key] = defaultConstraints[key].parseFunc ? defaultConstraints[key].parseFunc(value) : value;
   }
   return prepareConstraints(constraints);
+}
+
+/**
+ *
+ * @param req Express request.
+ */
+function getConstraintsForTradeRoute(req) {
+  const constraints = {};
+
+  for (const key in defaultConstraintsForTradeRoute) {
+    if (!defaultConstraintsForTradeRoute.hasOwnProperty(key)) {
+      continue;
+    }
+    // get value from request or default value
+    let value = req.query[key] || defaultConstraintsForTradeRoute[key].defaultValue;
+
+    // Parse the value if we have a parsing function
+    constraints[key] = defaultConstraintsForTradeRoute[key].parseFunc ? defaultConstraintsForTradeRoute[key].parseFunc(value) : value;
+  }
+  return constraints;
 }
 
 /**
@@ -88,7 +118,15 @@ function prepareConstraints(constraints) {
     for (let item of extendedSystems.values()) {
       logger.debug('Start system: ' + systems.findById(item).systemName);
     }
-
+  }
+  if (constraints.toSystems) {
+    newConstraints.toSystems = new Set(constraints.toSystems.split(',').map((name) => {
+      const id = systems.nameToId(name.trim());
+      if (id === -1) {
+        throw Error('Unknown system ' + name.trim());
+      }
+      return id;
+    }));
   }
   logger.debug('Constraints : %j', newConstraints);
   return newConstraints;
@@ -96,5 +134,6 @@ function prepareConstraints(constraints) {
 
 module.exports = {
   prepareConstraints,
+  getConstraintsForTradeRoute,
   getConstraints
 };

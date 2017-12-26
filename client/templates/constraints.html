@@ -1,63 +1,67 @@
-<form>
+<form class="form-horizontal">
     <div class="container">
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Regions</label>
-
+            <label for="regionsSelect" class="col-sm-2 control-label">Regions</label>
             <div class="col-sm-8">
-
-                <tags-input id="regionsSelect" class="bootstrap" ng-model="regions" min-tags="1" add-from-autocomplete-only="true"
+                <tags-input id="regionsSelect" class="bootstrap" ng-model="regions" min-tags="0" add-from-autocomplete-only="true"
                             add-on-paste="true" replace-spaces-with-dashes="false" placeholder="Add a region">
                     <auto-complete source="allRegions($query)" min-length="2"></auto-complete>
                 </tags-input>
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label">From Systems</label>
-            <tags-input id="fromSystems" class="bootstrap col-sm-8" ng-model="systems" min-tags="1"
+            <label for="fromSystems" class="col-sm-2 control-label">From Systems</label>
+            <tags-input id="fromSystems" class="bootstrap col-sm-3" ng-model="fromSystems" min-tags="0"
+                        add-from-autocomplete-only="true" add-on-paste="true" replace-spaces-with-dashes="false" placeholder="Add a system">
+                <auto-complete source="allSystems($query)" min-length="2"></auto-complete>
+            </tags-input>
+
+            <label for="toSystems" class="col-sm-2 control-label">To Systems</label>
+            <tags-input id="toSystems" class="bootstrap col-sm-3" ng-model="toSystems" min-tags="0"
                         add-from-autocomplete-only="true" add-on-paste="true" replace-spaces-with-dashes="false" placeholder="Add a system">
                 <auto-complete source="allSystems($query)" min-length="2"></auto-complete>
             </tags-input>
         </div>
 
         <div class="form-group row">
-            <label for="fromSystemRadius" class="col-sm-2 col-form-label">From Jump Radius</label>
+            <label for="fromSystemRadius" class="col-sm-2 control-label">From Jump Radius</label>
 
             <div class="col-sm-2">
                 <input class="form-control" ng-model="constraints.fromSystemRadius" id="fromSystemRadius">
             </div>
 
-            <label for="maxCash" class="col-sm-1 col-form-label">Max Cash</label>
+            <label for="maxCash" class="col-sm-1 control-label">Max Cash</label>
 
             <div class="col-sm-2">
                 <input class="form-control" ng-model="constraints.maxCash" id="maxCash">
             </div>
-            <label for="minSecurity" class="col-sm-1 col-form-label">Minimum Security</label>
+            <label for="minSecurity" class="col-sm-1 control-label">Minimum Security</label>
 
             <div class="col-sm-2">
                 <input class="form-control" ng-model="constraints.minSecurity" id="minSecurity">
             </div>
 
             <div>
-            <label class="col-sm-1 col-form-label"><input type="checkbox" ng-model="constraints.avoidLowSec"> Avoid LowSec</label>
+            <label class="col-sm-1 control-label"><input type="checkbox" ng-model="constraints.avoidLowSec"> Avoid LowSec</label>
             </div>
 
 
         </div>
 
         <div class="form-group row">
-            <label for="maxCapacity" class="col-sm-2 col-form-label">Max Cargo Capacity</label>
+            <label for="maxCapacity" class="col-sm-2 control-label">Max Cargo Capacity</label>
 
             <div class="col-sm-2">
                 <input class="form-control" ng-model="constraints.maxCapacity" id="maxCapacity">
             </div>
 
-            <label for="minProfit" class="col-sm-1 col-form-label">Minimum Profit</label>
+            <label for="minProfit" class="col-sm-1 control-label">Minimum Profit</label>
 
             <div class="col-sm-2">
                 <input class="form-control" ng-model="constraints.minProfit" id="minProfit">
             </div>
 
-            <label for="maxJumps" class="col-sm-1 col-form-label">Max Jumps</label>
+            <label for="maxJumps" class="col-sm-1 control-label">Max Jumps</label>
 
             <div class="col-sm-2">
                 <input class="form-control" ng-model="constraints.maxJumps" id="maxJumps">
@@ -77,7 +81,7 @@
         </div>
 
         <div class="form-group row">
-            <label for="shipType" class="col-sm-2 col-form-label">Max Ship Speed (m/s)</label>
+            <label for="shipType" class="col-sm-2 control-label">Max Ship Speed (m/s)</label>
 
             <div class="col-sm-2">
                 <select class="form-control" ng-model="constraints.shipType" id="shipType">
@@ -85,20 +89,20 @@
                 </select>
             </div>
 
-            <label for="maxWarpSpeed" class="col-sm-1 col-form-label">Warp speed</label>
+            <label for="maxWarpSpeed" class="col-sm-1 control-label">Warp speed</label>
 
             <div class="col-sm-2">
                 <input class="form-control" ng-model="constraints.maxWarpSpeed" id="maxWarpSpeed">
             </div>
 
-            <label for="alignTime" class="col-sm-1 col-form-label">Align Time</label>
+            <label for="alignTime" class="col-sm-1 control-label">Align Time</label>
 
             <div class="col-sm-2">
                 <input class="form-control" ng-model="constraints.alignTime" id="alignTime">
             </div>
 
             <div class="col-sm-1">
-                <button type="submit" class="btn btn-primary pull-right" ng-click="refresh()">Go!</button>
+                <button type="submit" class="btn btn-primary pull-right" ng-click="refresh()" autofocus>Go!</button>
             </div>
         </div>
     </div>

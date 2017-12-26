@@ -8,7 +8,7 @@ class OrdersFinder {
   findProfitableOrders(type) {
     const orderPromises = [];
     for (const regionId of regions.getAllRegionIds()) {
-      let p = crest.getMarketOrdersForType(regionId, type);
+      let p = crest.getMarketOrdersForType(regionId, type, false);
       orderPromises.push(p);
     }
 

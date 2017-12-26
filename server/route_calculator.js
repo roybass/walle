@@ -1,6 +1,8 @@
 const path = require('path');
 const EVEoj = require("EVEoj");
 const NodeCache = require('node-cache');
+const fileStore = require('./crest/file_store');
+const consts = require('./const');
 const fs = require('fs');
 
 const SDD = EVEoj.SDD.Create("json", { path: "SDD_Ascension_201611140" });
@@ -28,15 +30,18 @@ class RouteCalculatorWithCache {
     } catch (e) {}
   }
 
-  getRoute(fromSystemId, toSystemId, avoidLowSec) {
-    const key = fromSystemId + '_' + toSystemId + '_' + avoidLowSec;
-    let route = this.cache.get(key);
-    if (!route) {
-      route = this._calcRoute(fromSystemId, toSystemId, avoidLowSec);
-      this.cache.set(key, route);
-    }
-    return route
+  async getRoute(fromSystemId, toSystemId, avoidLowSec) {
+    const fKey = 'routes/' + fromSystemId + '/' + toSystemId + '_' + avoidLowSec;
+    return fileStore.get(fKey, consts.YEAR, true).then((data) => {
+      if (data !== undefined && data !== null) {
+        // log.debug('Found cached data for %s', relativeUrl);
+        return JSON.parse(data);
+      }
+      const route = this._calcRoute(fromSystemId, toSystemId, avoidLowSec);
+      return fileStore.set(fKey, JSON.stringify(route)).then(() => route);
+    });
   }
+
 
   getRouteTime(trade, constraints) {
     let duration = 0;
@@ -140,7 +145,9 @@ class RouteCalculatorWithCache {
   }
 
   _calcRoute(fromStationId, toStationId, avoidLowSec) {
-    return this.map.Route(fromStationId, toStationId, [], avoidLowSec, false);
+    const route = this.map.Route(fromStationId, toStationId, [], avoidLowSec, false);
+    route.unshift(fromStationId);
+    return route;
   }
 }
 

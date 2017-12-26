@@ -25,6 +25,7 @@ walleApp.component('orders', {
             $scope.sellChart.data = getChartData($scope.orders.sellOrders, 0.0, 0.95);
           }
           $scope.loader = false;
+          console.log('', $scope.orders);
         });
 
       $scope.buyFilter = function (item) {
@@ -83,6 +84,56 @@ walleApp.component('orders', {
           chartData.push(['', orders[i].price]);
         }
         return chartData;
+      }
+
+      $scope.selectedBuyOrder = null;
+      $scope.selectedSellOrder = null;
+      $scope.onSelect = function(order, buyOrSell) {
+        if (order.selected === true) {
+          // Select
+          if (buyOrSell === 'buy') {
+            if ($scope.selectedBuyOrder) {
+              $scope.selectedBuyOrder.selected = false;
+            }
+            $scope.selectedBuyOrder = order;
+          } else {
+            if ($scope.selectedSellOrder) {
+              $scope.selectedSellOrder.selected = false;
+            }
+            $scope.selectedSellOrder = order;
+          }
+        } else {
+          // Deselect
+          if (buyOrSell === 'buy') {
+            if ($scope.selectedBuyOrder) {
+              $scope.selectedBuyOrder.selected = false;
+            }
+            $scope.selectedBuyOrder = null;
+          } else {
+            if ($scope.selectedSellOrder) {
+              $scope.selectedSellOrder.selected = false;
+            }
+            $scope.selectedSellOrder = null;
+          }
+        }
+        $scope.refreshRoutes();
+      }
+
+      $scope.refreshRoutes = function() {
+        if (!$scope.selectedSellOrder && !$scope.selectedBuyOrder) {
+          return [];
+        }
+        const fromStations = $scope.selectedSellOrder ? [$scope.selectedSellOrder.location.id] : $scope.orders.sellOrders.map((item) => item.location.id);
+        const toStations = $scope.selectedBuyOrder ? [$scope.selectedBuyOrder.location.id] : $scope.orders.buyOrders.map((item) => item.location.id);
+        console.log("From stations ", fromStations);
+        console.log("To stations ", toStations);
+        
+        return $http.post('/api/route', {fromStations, toStations}).then((result) => {
+          console.log(result.data);
+          // 
+          return result.data;
+        });
+       
       }
     }
   }

@@ -8,11 +8,14 @@ const Progress = require('./progress');
 
 class TradeFinder {
 
-  findTradesInRegions(constraints, routesCalculator) {
-    const orderPromises = [];
-    const actualRegions = constraints.regions || regions.getAllRegionIds();
-    logger.info('Searching %d regions', actualRegions.length);
-    for (const regionId of actualRegions) {
+  findTradesInRoute(constraints, routesCalculator) {
+    logger.debug('%j', constraints);
+    const orderPromises  = []
+    const regions = [
+      systems.findById(parseInt(constraints.fromSystem)).regionId,
+      systems.findById(parseInt(constraints.toSystem)).regionId
+    ];
+    for (const regionId of regions) {
       let p = crest.getAllMarketOrders(regionId);
       orderPromises.push(p);
     }
@@ -30,16 +33,7 @@ class TradeFinder {
         return this.findTrades(buyOrders, sellOrders, constraints, types, routesCalculator);
       });
 
-    });
-  }
-
-  findTradesOnRoute(constraints, routesCalculator) {
-    logger.debug('%j', constraints);
-      const regions = [
-        systems.findById(parseInt(constraints.fromSystem)).regionId,
-        systems.findById(parseInt(constraints.toSystem)).regionId
-      ];
-
+    });    
   }
 
 
@@ -68,9 +62,10 @@ class TradeFinder {
     ordersArr.push(order);
   }
 
-  async findTrades(buyOrders, sellOrders, constraints, types, routesCalculator) {
+  findTrades(buyOrders, sellOrders, constraints, types, routesCalculator) {
     const pairs = new Set();
     const trades = [];
+
     let all = 0;
     const mainProgress = new Progress(buyOrders.size);
     mainProgress.onProgress([0.05, 0.25, 0.5, 0.75, 0.95], (v) => logger.debug('%d % done', (v * 100)));
@@ -111,10 +106,7 @@ class TradeFinder {
         if (!sellOrder.station) {
           continue; // No station, we can't calculate distance etc.
         }
-        if (sellOrder.station.security < constraints.minSecurity) {
-          continue; // Too dangerous...
-        }
-        if (constraints.fromSystems && !constraints.fromSystems.has(sellOrder.station.systemId)) {
+        if (constraints.fromSystem && constraints.fromSystem !== sellOrder.station.systemId) {
           continue; // We have a 'from system' constraint and it doesn't match
         }
         for (const buyOrder of buyOrdersArr) {
@@ -122,15 +114,12 @@ class TradeFinder {
           if (!buyOrder.station) {
             continue; // No station, we can't calculate distance etc.
           }
-          if (buyOrder.station.security < constraints.minSecurity) {
-            continue; // Too dangerous..
-          }
-          if (constraints.toSystems && !constraints.toSystems.has(buyOrder.station.systemId)) {
+          if (constraints.toSystem && constraints.toSystem !== buyOrder.station.systemId) {
             continue; // We have a 'to system' constraint and it doesn't match
           }
           const priceDiff = buyOrder.price - sellOrder.price;
           if (priceDiff <= 0) {
-            break;
+            break; // No point in checking anymore pairs - we reached a point where seller price is higher than buyer price
           }
           const maxUnits = Math.floor(constraints.maxCapacity / type.volume);
           const minUnits = Math.max(buyOrder.minVolume, sellOrder.minVolume); // The higher min-volume wins
@@ -145,35 +134,32 @@ class TradeFinder {
 
           const tax = (constraints.tax * tradeUnits * buyOrder.price); // Tax is a percent of Buy Order price.
           const profit = tradeUnits * priceDiff - tax;
-          if (profit < constraints.minProfit) {
-            continue;
-          }
+          const profitPerM3 = profit / (tradeUnits * type.volume);
           if (sellOrder.price * tradeUnits > constraints.maxCash) {
             continue;
           }
           pairs.add(buyOrder.stationID + '_' + sellOrder.stationID);
-          potentialTrades.push({ profit, buyOrder, sellOrder, tradeUnits, type, typeId });
+          potentialTrades.push({ profit, buyOrder, sellOrder, tradeUnits, profitPerM3, type, typeId });
         }
       }
       potentialTrades.sort((a, b) => b.profit - a.profit);
-      for (let trade of potentialTrades) {
-        const route = await routesCalculator.getRoute(trade.sellOrder.station.systemId, trade.buyOrder.station.systemId, constraints.avoidLowSec);
-        if (route.length > constraints.maxJumps) {
-          continue;
-        }
-        trade.route = route;
-        trade.jumps = route.length;
-        trade.routeTime = routesCalculator.getRouteTime(trade, constraints);
-        trades.push(trade);
-        break;
+      for (let i = 0; i < Math.min(potentialTrades.length, 10); i++) {
+        trades.push(potentialTrades[i]);
       }
     }
     logger.info('Scanned %d possible trades', all);
     logger.info('%d station pairs', pairs.size);
-    trades.sort((left, right) => right.profit - left.profit);
+    logger.info('%d possible trdes', pairs.size);
+    trades.sort((left, right) => right.profitPerM3 - left.profitPerM3);
+
+    const route = routesCalculator.getRoute(constraints.fromSystem, constraints.toSystem, true);
+
+    for (let trade of trades) {
+      trade.route = route;
+      trade.jumps = route.length;
+    }
 
     return trades.slice(0, constraints.maxTrades);
-
   }
 
   getStationInfo(stationID) {

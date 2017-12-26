@@ -5,10 +5,10 @@ walleApp.component('constraints', {
     const params = $route.current.params;
 
     $scope.constraints = {
-      maxCash: params['maxCash'] || 30000000, // Max available cash for trading
-      maxJumps: params['maxJumps'] || 10, // Max jumps
-      maxCapacity: params['maxCapacity'] || 5100, // Cubic meters available for hauling
-      minProfit: params['minProfit'] || 100000, // Minimum profit per trade (units * price diff)
+      maxCash: params['maxCash'] || 1000000000, // Max available cash for trading
+      maxJumps: params['maxJumps'] || 30, // Max jumps
+      maxCapacity: params['maxCapacity'] || 1000, // Cubic meters available for hauling
+      minProfit: params['minProfit'] || 1000000, // Minimum profit per trade (units * price diff)
       fromSystemRadius: params['fromSystemRadius'] || 0, // Radius (in jumps) from the 'fromSystems' array.
       minSecurity: params['minSecurity'] || 0, // Minimum security status of from/to system.
       shipType: params['shipType'] || 'frigate',
@@ -20,7 +20,8 @@ walleApp.component('constraints', {
     $scope.refresh = function () {
       console.log("Emitting refresh");
       $scope.constraints.regions = fromTagsInput($scope.regions);
-      $scope.constraints.fromSystems = fromTagsInput($scope.systems);
+      $scope.constraints.fromSystems = fromTagsInput($scope.fromSystems);
+      $scope.constraints.toSystems = fromTagsInput($scope.toSystems);
       //  $route.updateParams($scope.constraints);
       $scope.$parent.$emit('refresh', $scope.constraints);
     };
@@ -44,8 +45,9 @@ walleApp.component('constraints', {
         });
       });
     };
-    $scope.regions = toTagsInput(params['regions'] || 'Metropolis, Heimatar, Derelik, Model Heath');
-    $scope.systems = toTagsInput(params['systems'] || 'Rens');
+    $scope.regions = toTagsInput(params['regions'] || '');
+    $scope.fromSystems = toTagsInput(params['fromSystems'] || '');
+    $scope.toSystems = toTagsInput(params['toSystems'] || '');
 
     function toTagsInput(str) {
       if (!str) {
@@ -74,7 +76,8 @@ walleApp.component('constraints', {
           $scope.$apply(function() {
             $scope.constraints = newConstraints;
             $scope.regions = toTagsInput(newConstraints.regions);
-            $scope.systems = toTagsInput(newConstraints.fromSystems);
+            $scope.fromSystems = toTagsInput(newConstraints.fromSystems);
+            $scope.toSystems = toTagsInput(newConstraints.toSystems);
           });
           
         }
@@ -85,7 +88,8 @@ walleApp.component('constraints', {
     $scope.saveFile = function() {
       console.log("Saving to file");
       $scope.constraints.regions = fromTagsInput($scope.regions);
-      $scope.constraints.fromSystems = fromTagsInput($scope.systems);
+      $scope.constraints.fromSystems = fromTagsInput($scope.fromSystems);
+      $scope.constraints.toSystems = fromTagsInput($scope.toSystems);
 
       $scope.download('walle.json', JSON.stringify($scope.constraints));
     }
