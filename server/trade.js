@@ -97,14 +97,14 @@ class TradeFinder {
       if (sellOrdersArr[0].price >= buyOrdersArr[0].price) {
         continue; // Best sell order is smaller than best buy order - forget about this type
       }
-      if (sellOrdersArr[0] > constraints.maxCash) {
+      if (sellOrdersArr[0].price > constraints.maxCash) {
         continue; // Too expensive.
       }
 
       const potentialTrades = [];
       for (const sellOrder of sellOrdersArr) {
         all++;
-        if (sellOrder.price > buyOrdersArr[0]) {
+        if (sellOrder.price > buyOrdersArr[0].price) {
           break; // No point in checking anymore pairs - we reached a point where seller price is higher than buyer price
         }
         sellOrder.station = this.getStationInfo(sellOrder.stationID);
@@ -164,8 +164,11 @@ class TradeFinder {
         trade.route = route;
         trade.jumps = route.length;
         trade.routeTime = routesCalculator.getRouteTime(trade, constraints);
+        trade.potentialTradesLength = potentialTrades.length;
+        trade.totalSells = sellOrdersArr.length;
+        trade.totalBuys = buyOrdersArr.length;
         trades.push(trade);
-        break;
+        break; // We're picking just the best trade from every type.
       }
     }
     logger.info('Scanned %d possible trades', all);

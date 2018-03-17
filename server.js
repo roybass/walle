@@ -133,6 +133,9 @@ function formatTrade(t, stats) {
         stats: systemStats
       }
     }),
-    totalVolume: t.type ? t.tradeUnits * t.type.volume : 'N/A'
+    totalVolume: t.type ? t.tradeUnits * t.type.volume : 'N/A',
+    totalTrades: t.potentialTradesLength,
+    totalSells: t.totalSells,
+    totalBuys: t.totalBuys 
   };
 }

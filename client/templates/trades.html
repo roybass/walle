@@ -10,6 +10,7 @@
         <th><a href="" ng-click="setSortField('type.name'); toggleOrder()">Item</a></th>
         <th><a href="" ng-click="setSortField('units'); toggleOrder()">Units</a></th>
         <th><a href="" ng-click="setSortField('totalVolume'); toggleOrder()">Volume</a></th>
+        <th><a href="" ng-click="setSortField('totalTrades'); toggleOrder()">Trades</a></th>
         <th><a href="" ng-click="setSortField('buy.station.name'); toggleOrder()">From Station</a></th>
         <th><a href="" ng-click="setSortField('sell.station.name'); toggleOrder()">To Station</a></th>
     </tr>
@@ -22,7 +23,7 @@
                    tooltip-template="Buy: {{trade.buy.price * trade.units | numeraljs}} @ {{trade.buy.price | numeraljs}} ISK<br>
              Sell: {{trade.sell.price * trade.units | numeraljs}} @ {{trade.sell.price | numeraljs}} ISK<br>
              Tax: {{ 0.02 * trade.sell.price * trade.units | numeraljs}} ISK">
-                {{trade.profit | numeraljs}}     
+                {{trade.profit | numeraljs}}
              </span>
         </td>
         <td>{{trade.jumps}} : <span ng-repeat="system in trade.route">
@@ -42,6 +43,7 @@
         </td>
         <td>{{trade.units | numeraljs}}</td>
         <td>{{trade.totalVolume | numeraljs:'0.0'}}</td>
+        <td><span tooltips tooltip-template="{{trade.totalSells}} Sellers. {{trade.totalBuys}} Buyers">{{trade.totalSells}}, {{trade.totalBuys}}</td>
         <td><span tooltips tooltip-template="{{trade.buy.station.region}}">{{trade.buy.station.name}}</span></td>
         <td><span tooltips tooltip-template="{{trade.sell.station.region}}">{{trade.sell.station.name}}</span></td>
     </tr>
