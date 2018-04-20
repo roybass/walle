@@ -7,14 +7,14 @@ walleApp.component('constraints', {
     $scope.constraints = {
       maxCash: params['maxCash'] || 1000000000, // Max available cash for trading
       maxJumps: params['maxJumps'] || 30, // Max jumps
-      maxCapacity: params['maxCapacity'] || 1000, // Cubic meters available for hauling
-      minProfit: params['minProfit'] || 1000000, // Minimum profit per trade (units * price diff)
+      maxCapacity: params['maxCapacity'] || 10000, // Cubic meters available for hauling
+      minProfit: params['minProfit'] || 10000000, // Minimum profit per trade (units * price diff)
       fromSystemRadius: params['fromSystemRadius'] || 0, // Radius (in jumps) from the 'fromSystems' array.
       minSecurity: params['minSecurity'] || 0, // Minimum security status of from/to system.
       shipType: params['shipType'] || 'frigate',
       maxWarpSpeed: params['maxWarpSpeed'] || 4.5,
       alignTime: params['alignTime'] || 8,
-      avoidLowSec : params['avoidLowSec'] || true
+      avoidLowSec : params['avoidLowSec'] || false
     };
 
     $scope.refresh = function () {
