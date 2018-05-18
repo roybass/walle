@@ -1,4 +1,4 @@
-const crest = require('./crest/crest');
+const crest = require('./crest/esi');
 const sde = require('eve-online-sde');
 const regions = require('../static/regions');
 const stations = require('../static/stations');
@@ -29,9 +29,10 @@ class OrdersFinder {
       sellOrders.sort((left, right) => left.price - right.price);
 
       const stationToRegion = (item) => {
-        const station = stations[item.location.id];
+        const station = stations[item.location_id];
         if (station) {
           item.region = station.regionName;
+          item.stationName = station.stationName;
         }
       };
 
@@ -47,7 +48,7 @@ class OrdersFinder {
   addAll(pagedData, ordersArr) {
     let res = ordersArr.concat([]);
     for (let page of pagedData) {
-      res = res.concat(page.items);
+      res = res.concat(page);
     }
     return res;
   }

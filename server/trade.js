@@ -1,4 +1,4 @@
-const crest = require('./crest/crest');
+const crest = require('./crest/esi');
 const sde = require('eve-online-sde');
 const logger = require('../logger');
 const stations = require('../static/stations');
@@ -45,12 +45,12 @@ class TradeFinder {
 
   addOrders(regionOrders, buyOrders, sellOrders) {
     for (const ordersPage of regionOrders) {
-      if (!ordersPage.items) {
+      if (!ordersPage.length) {
         logger.error("No pages found in order object");
         continue;
       }
-      for (const order of ordersPage.items) {
-        if (order.buy === true) {
+      for (const order of ordersPage) {
+        if (order.is_buy_order === true) {
           this.addOrder(order, buyOrders);
         } else {
           this.addOrder(order, sellOrders);
@@ -60,10 +60,10 @@ class TradeFinder {
   }
 
   addOrder(order, ordersMap) {
-    let ordersArr = ordersMap.get(order.type);
+    let ordersArr = ordersMap.get(order.type_id);
     if (!ordersArr) {
       ordersArr = [];
-      ordersMap.set(order.type, ordersArr);
+      ordersMap.set(order.type_id, ordersArr);
     }
     ordersArr.push(order);
   }
@@ -107,7 +107,7 @@ class TradeFinder {
         if (sellOrder.price > buyOrdersArr[0].price) {
           break; // No point in checking anymore pairs - we reached a point where seller price is higher than buyer price
         }
-        sellOrder.station = this.getStationInfo(sellOrder.stationID);
+        sellOrder.station = this.getStationInfo(sellOrder.location_id);
         if (!sellOrder.station) {
           continue; // No station, we can't calculate distance etc.
         }
@@ -118,7 +118,7 @@ class TradeFinder {
           continue; // We have a 'from system' constraint and it doesn't match
         }
         for (const buyOrder of buyOrdersArr) {
-          buyOrder.station = this.getStationInfo(buyOrder.stationID);
+          buyOrder.station = this.getStationInfo(buyOrder.location_id);
           if (!buyOrder.station) {
             continue; // No station, we can't calculate distance etc.
           }
@@ -133,11 +133,11 @@ class TradeFinder {
             break;
           }
           const maxUnits = Math.floor(constraints.maxCapacity / type.volume);
-          const minUnits = Math.max(buyOrder.minVolume, sellOrder.minVolume); // The higher min-volume wins
+          const minUnits = Math.max(buyOrder.min_volume, sellOrder.min_volume); // The higher min-volume wins
           if (maxUnits < minUnits) {
             continue; // Not enough capacity for this deal
           }
-          const availableUnits = Math.min(buyOrder.volume, sellOrder.volume);
+          const availableUnits = Math.min(buyOrder.volume_remain, sellOrder.volume_remain);
           if (availableUnits < minUnits) {
             continue;
           }
@@ -151,7 +151,7 @@ class TradeFinder {
           if (sellOrder.price * tradeUnits > constraints.maxCash) {
             continue;
           }
-          pairs.add(buyOrder.stationID + '_' + sellOrder.stationID);
+          pairs.add(buyOrder.location_id + '_' + sellOrder.location_id);
           potentialTrades.push({ profit, buyOrder, sellOrder, tradeUnits, type, typeId });
         }
       }

@@ -16,28 +16,24 @@
         <thead class="thead-inverse">
         <tr>
             <th>#</th>
-            <th>!</th>
             <th>Range</th>
             <th>Price</th>
             <th>Amount</th>
             <th>Region</th>
             <th>Location</th>
             <th>Age</th>
-            <th>Route</th>
         </tr>
         </thead>
         <tbody>
 
         <tr ng-repeat="order in orders.sellOrders | filter:sellFilter">
             <th>{{$index + 1}}</th>
-            <td><input type="checkbox" ng-model="order.selected" ng-click="onSelect(order, 'sell')"></td>
             <td>{{order.range}}</td>
             <td>{{order.price | numeraljs:'0,0.00'}}</td>
-            <td>{{order.volume | numeraljs}} <span ng-if="order.minVolume > 1"> (Min: {{order.minVolume | numeraljs}})</span></td>
+            <td>{{order.volume_remain | numeraljs}} <span ng-if="order.minVolume > 1"> (Min: {{order.min_volume | numeraljs}})</span></td>
             <td>{{order.region}}</td>
-            <td>{{order.location.name}}</td>
+            <td>{{order.stationName}}</td>
             <td>{{diffToNow(order.issued)}}</td>
-            <td>{{getRoute(selectedSellOrder, order, true).length}}</td>
         </tr>
         </tbody>
     </table>
@@ -49,28 +45,24 @@
         <thead class="thead-inverse">
         <tr>
             <th>#</th>
-            <th>!</th>
             <th>Range</th>
             <th>Price</th>
             <th>Amount</th>
             <th>Region</th>
             <th>Location</th>
             <th>Age</th>
-            <th>Route</th>
         </tr>
         </thead>
         <tbody>
 
         <tr ng-repeat="order in orders.buyOrders | filter:buyFilter">
             <th>{{$index + 1}}</th>
-            <td><input type="checkbox" ng-model="order.selected" ng-click="onSelect(order, 'buy')"></td>
             <td>{{order.range}}</td>
             <td>{{order.price | numeraljs:'0,0.00'}}</td>
-            <td>{{order.volume | numeraljs}} <span ng-if="order.minVolume > 1"> (Min: {{order.minVolume | numeraljs}})</span></td>
+            <td>{{order.volume_remain | numeraljs}} <span ng-if="order.minVolume > 1"> (Min: {{order.min_volume | numeraljs}})</span></td>
             <td>{{order.region}}</td>
-            <td>{{order.location.name}}</td>
+            <td>{{order.stationName}}</td>
             <td>{{diffToNow(order.issued)}}</td>
-            <td>{{getRoute(order, selectedSellOrder, true).length}}</td>
         </tr>
         </tbody>
     </table>

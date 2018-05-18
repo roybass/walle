@@ -1,6 +1,6 @@
 const async = require('async');
 const regions = require('../static/regions');
-const crest = require('./crest/crest');
+const crest = require('./crest/esi');
 const xmlClient = require('./crest/xml');
 const logger = require('../logger');
 
