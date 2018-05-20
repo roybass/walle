@@ -29,10 +29,10 @@
         <td>{{trade.jumps}} : <span ng-repeat="system in trade.route">
             <span tooltips
                   tooltip-template="<div>{{system.systemName}} ({{system.security | numeraljs:'0.00'}}) </div>
-                  <div>{{system.stats.podKills > 0 ? system.stats.podKills + ' Pods' : ''}}</div> 
+                  <div>{{system.stats.pod_kills > 0 ? system.stats.pod_kills + ' Pods' : ''}}</div> 
                   <div>{{system.regionName}}</div>"
                   style="color:{{getSecurityColor(system.security)}}; 
-                  {{system.stats.podKills > 0 ? 'text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;' : ''}}"
+                  {{system.stats.pod_kills > 0 ? 'text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;' : ''}}"
                   class="route glyphicon glyphicon glyphicon-stop"
                   aria-hidden="true"></span></span></td>
         <td>{{trade.routeTime | numeraljs:'00:00:00'}}</td>

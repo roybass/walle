@@ -6,7 +6,7 @@ const regions = require('./static/regions');
 const systems = require('./static/systems');
 const stations = require('./static/stations');
 const routesCalc = require('./server/route_calculator');
-const xmlApi = require('./server/crest/xml');
+const esi = require('./server/crest/esi');
 const constraintsFactory = require('./server/constraints_factory');
 const logger = require('./logger');
 const express = require('express');
@@ -32,7 +32,7 @@ routesCalc.init().then((routesCalculator) => {
   app.get('/api/bestTrades', (req, res)  => {
     trade.findTradesInRegions(constraintsFactory.getConstraints(req), routesCalculator)
       .then((routes) => {
-        xmlApi.getSystemStats().then((stats) => {
+        esi.getKills().then((stats) => {
           res.json(routes.map((t) => {
             return formatTrade(t, stats);
           }));
@@ -44,7 +44,7 @@ routesCalc.init().then((routesCalculator) => {
   app.get('/api/tradeRoute', (req, res)  => {
     tradeRoute.findTradesInRoute(constraintsFactory.getConstraintsForTradeRoute(req), routesCalculator)
       .then((routes) => {
-        xmlApi.getSystemStats().then((stats) => {
+        esi.getKills().then((stats) => {
           res.json(routes.map((t) => {
             return formatTrade(t, stats);
           }));
@@ -125,7 +125,7 @@ function formatTrade(t, stats) {
     routeTime: t.routeTime,
     route: t.route.map((systemId) => {
       const system = systems.findById(systemId);
-      const systemStats = stats[systemId] || { solarSystemID: systemId.toString(),  shipKills : 0, factionKills : 0, podKills : 0 };
+      const systemStats = stats[systemId] || { solarSystemID: systemId.toString(),  ship_kills : 0, npc_kills : 0, pod_kills : 0 };
       return {
         systemName: system.systemName,
         regionName: system.regionName,

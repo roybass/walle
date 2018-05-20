@@ -14,7 +14,7 @@ class EsiClient {
     return { data, regionId };
   }
 
-  getMarketOrdersForType(regionId, type, useCache = true) {
+  async getMarketOrdersForType(regionId, type, useCache = true) {
     //markets/10000001/orders/?datasource=tranquility&order_type=buy&page=1&type_id=123'
     //markets/10000030/datasource=tranquility&order_type=buy&type_id=33475&page=1
     const sellUrl = `markets/${regionId}/orders/?datasource=tranquility&order_type=sell&type_id=${type}`;
@@ -28,6 +28,16 @@ class EsiClient {
         regionId
       }
     })
+  }
+
+  async getKills(useCache = true) {
+    const relativeUrl = 'universe/system_kills/?datasource=tranquility'
+    const kills = await this.getData(relativeUrl, 10 * consts.MINUTE, useCache);
+    const statsAsObj = {};
+    kills.forEach(item => {
+      statsAsObj[item.system_id] = item;
+    });
+    return statsAsObj;
   }
 
   async getData(relativeUrl, maxAge, useCache = true) {
