@@ -4,6 +4,11 @@ const esiBaseUrl = 'https://esi.evetech.net/latest/';
 const consts = require('./../const');
 const log = require('../../logger');
 
+const https = require('https');
+
+const agent = new https.Agent();
+agent.maxSockets = 10;
+
 
 const timeout = 30000;
 class EsiClient {
@@ -15,8 +20,6 @@ class EsiClient {
   }
 
   async getMarketOrdersForType(regionId, type, useCache = true) {
-    //markets/10000001/orders/?datasource=tranquility&order_type=buy&page=1&type_id=123'
-    //markets/10000030/datasource=tranquility&order_type=buy&type_id=33475&page=1
     const sellUrl = `markets/${regionId}/orders/?datasource=tranquility&order_type=sell&type_id=${type}`;
     const buyUrl = `markets/${regionId}/orders/?datasource=tranquility&order_type=buy&type_id=${type}`;
     const p1 = this.getDataPaged(sellUrl, consts.MINUTE, useCache);
@@ -34,7 +37,7 @@ class EsiClient {
     const relativeUrl = 'universe/system_kills/?datasource=tranquility'
     const kills = await this.getData(relativeUrl, 10 * consts.MINUTE, useCache);
     const statsAsObj = {};
-    kills.forEach(item => {
+    kills.data.forEach(item => {
       statsAsObj[item.system_id] = item;
     });
     return statsAsObj;
@@ -44,38 +47,51 @@ class EsiClient {
     return fileStore.get(relativeUrl, maxAge, useCache).then((data) => {
       if (data !== undefined && data !== null) {
         // log.debug('Found cached data for %s', relativeUrl);
-        return JSON.parse(data);
+        try {
+          return JSON.parse(data);
+        } catch (e) {
+          log.error('Error parsing cache for url %s, %s, %s', relativeUrl, e.message, data, );
+        }
       }
       const url = esiBaseUrl + relativeUrl;
-      log.debug('No cache found. Request data from %s', url);
-      return rp({url, timeout}).then((response) => {
-        if (!response) {
+      // log.debug('No cache found. Request data from %s', url);
+      return rp({uri: url, 
+          timeout, 
+          agent,
+          resolveWithFullResponse: true
+        }).then((response) => {
+        if (!response || response.statudCode >= 400) {
           log.warn('Error getting data from %s', url);
         }
-        const data = response ? response : '{}';
-        return fileStore.set(relativeUrl, response).then(() => JSON.parse(response));
+        const result = {
+          data : JSON.parse(response.body) || {},
+          statusCode : response.statusCode,
+          pages : response.headers['x-pages']
+        };
+        log.debug('Done getting data from %s', relativeUrl);
+        return fileStore.set(relativeUrl, JSON.stringify(result)).then(() => result);
       }).catch((err) => {
-        log.warn('Error getting data for ' + relativeUrl + ': ', err);
-        return fileStore.set(relativeUrl, '{}').then(() => {
-          return {};
-        });
+        log.error('Error getting data for ' + relativeUrl + ': ', err.message);
+        return fileStore.set(relativeUrl, '{"data":{}}').then(() => {data: {}});
       });
     });
   }
 
   async getDataPaged(url, maxAge, useCache) {
     const allData = [];
-    let page = 0;
-    while (true) {
-      page++;
+    const firstPage = await this.getData(url, maxAge, useCache);
+    allData.push(firstPage.data);
+    const promises = [];
+    for (let page = 1; page < firstPage.pages; page++) {
       let pageUrl = url + '&page=' + page;
-      const data = await this.getData(pageUrl, maxAge, useCache);
-      if (data == null || data.length === 0 || (Object.keys(data).length === 0 && data.constructor === Object)) {
-        break;
-      }
-      allData.push(data);
+      promises.push(this.getData(pageUrl, maxAge, useCache).then((data) => {
+        if (data == null || data.length === 0 || (Object.keys(data).length === 0 && data.constructor === Object)) {
+          return;
+        }
+        allData.push(data.data);
+      }));
     }
-    return allData;
+    return Promise.all(promises).then(() => allData);
   }
 }
 
