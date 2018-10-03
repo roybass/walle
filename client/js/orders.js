@@ -16,12 +16,12 @@ walleApp.component('orders', {
           $scope.orders = res.data;
           if ($scope.orders.buyOrders.length) {
             $scope.highestBuyOrder = $scope.orders.buyOrders[0].price;
-            $scope.type = $scope.orders.buyOrders[0].type;
+            $scope.type = $scope.orders.type;
             $scope.buyChart.data = getChartData($scope.orders.buyOrders, 0.0, 0.95);
           }
           if ($scope.orders.sellOrders.length) {
             $scope.lowestSellOrder = $scope.orders.sellOrders[0].price;
-            $scope.type = $scope.orders.buyOrders[0].type;
+            $scope.type = $scope.orders.type;
             $scope.sellChart.data = getChartData($scope.orders.sellOrders, 0.0, 0.95);
           }
           $scope.loader = false;

@@ -2,13 +2,20 @@ const crest = require('./crest/esi');
 const sde = require('eve-online-sde');
 const regions = require('../static/regions');
 const stations = require('../static/stations');
+const systems = require('../static/systems');
 const logger = require('../logger');
 
 class OrdersFinder {
-  findProfitableOrders(type) {
+  async findProfitableOrders(typeId) {
+    const types = await sde.types();
+    const type = types[typeId];
+    if (!type) {
+      return {};
+    }
+
     const orderPromises = [];
     for (const regionId of regions.getAllRegionIds()) {
-      let p = crest.getMarketOrdersForType(regionId, type, false);
+      let p = crest.getMarketOrdersForType(regionId, typeId, false);
       orderPromises.push(p);
     }
 
@@ -33,14 +40,23 @@ class OrdersFinder {
         if (station) {
           item.region = station.regionName;
           item.stationName = station.stationName;
+          return;
+        } 
+
+        const system = systems.findById(item.system_id);
+        if (system) {
+          item.region = system.regionName;
+          item.stationName = 'A structure in ' + system.systemName;
         }
+        
       };
 
       buyOrders.forEach(stationToRegion);
       sellOrders.forEach(stationToRegion);
       return {
         sellOrders,
-        buyOrders
+        buyOrders,
+        type
       };
     });
   }
