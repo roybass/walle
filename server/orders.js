@@ -6,6 +6,7 @@ const systems = require('../static/systems');
 const logger = require('../logger');
 
 class OrdersFinder {
+
   async findProfitableOrders(typeId) {
     const types = await sde.types();
     const type = types[typeId];

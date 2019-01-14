@@ -1,30 +1,37 @@
 walleApp.component('orders', {
     templateUrl: 'templates/orders.html',
-    controller: function OrdersController($scope, $http, $route, $location, $anchorScroll) {
+    controller: function OrdersController($scope, $http, $route, $location, $anchorScroll, $window) {
 
-      const typeId = $route.current.params['type'];
-
+      $scope.typeId = $route.current.params['type'] || null;
       $scope.type = {};
       $scope.orders = {};
-      $scope.loader = true;
+      $scope.loader = false;
       $scope.highestBuyOrder = 0.0;
       $scope.lowestSellOrder = 0.0;
       $scope.showAll = false;
 
-      $http.get(`/api/orders/${typeId}`)
-        .then((res) => {
-          $scope.orders = res.data;
-          if ($scope.orders.buyOrders.length) {
-            $scope.highestBuyOrder = $scope.orders.buyOrders[0].price;
-            $scope.type = $scope.orders.type;
-          }
-          if ($scope.orders.sellOrders.length) {
-            $scope.lowestSellOrder = $scope.orders.sellOrders[0].price;
-            $scope.type = $scope.orders.type;
-          }
-          $scope.chartData.data = getChartDataForAll($scope.orders.sellOrders, $scope.orders.buyOrders);
-          $scope.loader = false;
-        });
+      $scope.goToOrders = function() {
+        $window.location.href = `#/orders?type=${$scope.typeId}`;
+      };
+
+
+      $scope.loadOrders = function() {
+        $scope.loader = true;
+        $http.get(`/api/orders/${$scope.typeId}`)
+          .then((res) => {
+            $scope.orders = res.data;
+            if ($scope.orders.buyOrders.length) {
+              $scope.highestBuyOrder = $scope.orders.buyOrders[0].price;
+              $scope.type = $scope.orders.type;
+            }
+            if ($scope.orders.sellOrders.length) {
+              $scope.lowestSellOrder = $scope.orders.sellOrders[0].price;
+              $scope.type = $scope.orders.type;
+            }
+            $scope.chartData.data = getChartDataForAll($scope.orders.sellOrders, $scope.orders.buyOrders);
+            $scope.loader = false;
+          });        
+      };
 
       $scope.buyFilter = function (item) {
         if ($scope.showAll) {
@@ -85,55 +92,10 @@ walleApp.component('orders', {
         return chartData;
       }
 
-      $scope.selectedBuyOrder = null;
-      $scope.selectedSellOrder = null;
-      $scope.onSelect = function(order, buyOrSell) {
-        if (order.selected === true) {
-          // Select
-          if (buyOrSell === 'buy') {
-            if ($scope.selectedBuyOrder) {
-              $scope.selectedBuyOrder.selected = false;
-            }
-            $scope.selectedBuyOrder = order;
-          } else {
-            if ($scope.selectedSellOrder) {
-              $scope.selectedSellOrder.selected = false;
-            }
-            $scope.selectedSellOrder = order;
-          }
-        } else {
-          // Deselect
-          if (buyOrSell === 'buy') {
-            if ($scope.selectedBuyOrder) {
-              $scope.selectedBuyOrder.selected = false;
-            }
-            $scope.selectedBuyOrder = null;
-          } else {
-            if ($scope.selectedSellOrder) {
-              $scope.selectedSellOrder.selected = false;
-            }
-            $scope.selectedSellOrder = null;
-          }
-        }
-        $scope.refreshRoutes();
+      if ($scope.typeId !== null) {
+        $scope.loadOrders();
       }
 
-      $scope.refreshRoutes = function() {
-        if (!$scope.selectedSellOrder && !$scope.selectedBuyOrder) {
-          return [];
-        }
-        const fromStations = $scope.selectedSellOrder ? [$scope.selectedSellOrder.location.id] : $scope.orders.sellOrders.map((item) => item.location.id);
-        const toStations = $scope.selectedBuyOrder ? [$scope.selectedBuyOrder.location.id] : $scope.orders.buyOrders.map((item) => item.location.id);
-        console.log("From stations ", fromStations);
-        console.log("To stations ", toStations);
-        
-        return $http.post('/api/route', {fromStations, toStations}).then((result) => {
-          console.log(result.data);
-          // 
-          return result.data;
-        });
-       
-      }
     }
   }
 ).filter('diffToNow', () => {

@@ -25,15 +25,28 @@
     <script src="js/constraints.js" type="application/javascript"></script>
     <script src="js/trades.js" type="application/javascript"></script>
     <script src="js/orders.js" type="application/javascript"></script>
-    <script src="js/tradeRoutes.js" type="application/javascript"></script>
     <script src="js/search.js" type="application/javascript"></script>
-    <script src="js/navBar.js" type="application/javascript"></script>
 
 </head>
 
 <body ng-app="walleApp" ng-controller="MainController">
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Walle</a>
+    </div>
 
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li ng-class="{ active: isActive('/main')}"><a href="#/main">Trades</a></li>
+        <li ng-class="{ active: isActive('/search')}"><a href="#/search">Items</a></li>
+        <li ng-class="{ active: isActive('/orders')}"><a href="#/orders">Orders</a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
 <div ng-view></div>
-
 </body>
 </html>

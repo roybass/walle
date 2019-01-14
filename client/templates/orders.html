@@ -1,4 +1,19 @@
-<navbar/>
+<div class="container">
+    <div class="row"/>
+    <form class="form-horizontal">
+        <div class="container">
+            <div class="form-group row">
+                <label for="type" class="col-sm-2 control-label">Type Id</label>
+                <div class="col-sm-6">
+                    <input class="form-control" ng-model="typeId" id="typeId" name="typeId" placeHolder="Type Id" autocomplete="on">
+                </div>
+              <div class="col-sm-1">
+                  <button type="submit" class="btn btn-primary pull-right" ng-click="goToOrders()" autofocus>Go!</button>
+              </div>
+            </div>
+        </div>    
+    </form>
+</div>
 <div class="container">
     <h1>Orders for {{type.name.en}}</h1>
 
@@ -7,7 +22,7 @@
     <!-- Rounded switch -->
     <label class="switch">
         <input type="checkbox" ng-model="showAll">
-        Show all
+        Show all (or only potential trades)
     </label>
 
     <a id="sellOrders"></a>

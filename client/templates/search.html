@@ -1,4 +1,3 @@
-<navbar/>
 <div class="container">
     <div class="row"/>
     <form class="form-horizontal">
@@ -6,7 +5,7 @@
             <div class="form-group row">
                 <label for="type" class="col-sm-2 control-label">Type Name</label>
                 <div class="col-sm-6">
-                    <input class="form-control" ng-model="typeName" id="typeName" placeHolder="Partial text to search" autocomplete="on">
+                    <input class="form-control" ng-model="typeName" id="typeName" name="typeName" placeHolder="Partial text to search" autocomplete="on">
                 </div>
               <div class="col-sm-1">
                   <button type="submit" class="btn btn-primary pull-right" ng-click="go()" autofocus>Go!</button>
@@ -17,7 +16,6 @@
 </div>
 
 <div class="container">
-
     <table ng-show="data.length > 0" class="table table-striped table-hover" ng-if="!loading">
         <thead class="thead-inverse">
         <tr>
@@ -32,9 +30,9 @@
         <tbody>
 
         <tr ng-repeat="type in data | orderBy:sortField:sortOrder">
-            <th><a target=_blank href="#/orders?type={{type.type_id}}">{{type.type_id}}</a></th>
+            <td><a target=_blank href="#/orders?type={{type.type_id}}">{{type.type_id}}</a></td>
             <td>{{type.group}}</td>
-            <td><img src="https://image.eveonline.com/Type/{{type.type_id}}_32.png"/> </td>
+            <td><img ng-src="https://image.eveonline.com/Type/{{type.type_id}}_32.png"/> </td>
             <td><span tooltips tooltip-class="description-tooltip" tooltip-template="{{type.description}}">{{type.name}}</td>
             <td>{{type.volume}}</td>
             <td>{{type.mass}}</td>
