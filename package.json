@@ -17,6 +17,7 @@
     "extend": "^3.0.0",
     "fs-promise": "^2.0.0",
     "node-cache": "^4.1.1",
+    "nodemon": "^1.18.9",
     "numeral": "^2.0.4",
     "read-each-line-sync": "^1.0.4",
     "request": "^2.79.0",

@@ -13,6 +13,38 @@ agent.maxSockets = 10;
 const timeout = 30000;
 class EsiClient {
 
+  async searchType(typeName, limit, offset) {
+    const url = `search/?categories=inventory_type&datasource=tranquility&language=en-us&search=${encodeURIComponent(typeName)}&strict=false`;
+    const response = await this.getData(url, consts.MINUTE, false);
+    if (response.statusCode !== 200) {
+      return [];
+    }
+    if (!response.data || !response.data.inventory_type) {
+      return [];
+    }
+
+    const ids = response.data.inventory_type;
+    const maxResults = Math.min(limit, ids.length);
+    const promises = [];
+    for (let i = offset; i < maxResults; i++) {
+      const typeUrl = `universe/types/${ids[i]}/?datasource=tranquility&language=en-us`;
+      const me = this;
+      promises.push(this.getData(typeUrl, consts.WEEK, true)
+        .then(async typeResponse => {
+          const group = await me.getGroup(typeResponse.data.group_id);
+          typeResponse.data.group = group;
+          return typeResponse.data;
+        }
+      ));
+    }
+    return Promise.all(promises);
+  }
+
+  async getGroup(groupId) {
+    const url = `universe/groups/${encodeURIComponent(groupId)}/?datasource=tranquility&language=en-us`
+    return this.getData(url, consts.WEEK, true).then((response => response.data.name));
+  }
+
   async getAllMarketOrders(regionId, useCache = true) {
     const url = 'markets/' + regionId + '/orders/?datasource=tranquility&order_type=all';
     const data = await this.getDataPaged(url, consts.HOUR, useCache);
@@ -69,7 +101,11 @@ class EsiClient {
           pages : response.headers['x-pages']
         };
         log.debug('Done getting data from %s', relativeUrl);
-        return fileStore.set(relativeUrl, JSON.stringify(result)).then(() => result);
+        if (useCache) {
+          return fileStore.set(relativeUrl, JSON.stringify(result)).then(() => result);
+        } 
+        return result;
+        
       }).catch((err) => {
         log.error('Error getting data for ' + relativeUrl + ': ', err.message);
         return fileStore.set(relativeUrl, '{"data":{}}').then(() => {data: {}});

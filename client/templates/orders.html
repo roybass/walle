@@ -1,14 +1,14 @@
+<navbar/>
 <div class="container">
     <h1>Orders for {{type.name.en}}</h1>
 
+
+    <div google-chart chart="chartData" style="display:inline-block; height:400px; width:100%;"></div>
     <!-- Rounded switch -->
     <label class="switch">
         <input type="checkbox" ng-model="showAll">
         Show all
     </label>
-
-    <div google-chart chart="buyChart" style="display:inline-block; height:600px; width:40%;"></div>
-    <div google-chart chart="sellChart" style="display:inline-block; height:600px; width:40%;"></div>
 
     <a id="sellOrders"></a>
     <h2>Sell orders (<a ng-click="scrollTo('buyOrders');">Buy Orders</a>) </h2>

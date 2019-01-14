@@ -17,15 +17,13 @@ walleApp.component('orders', {
           if ($scope.orders.buyOrders.length) {
             $scope.highestBuyOrder = $scope.orders.buyOrders[0].price;
             $scope.type = $scope.orders.type;
-            $scope.buyChart.data = getChartData($scope.orders.buyOrders, 0.0, 0.95);
           }
           if ($scope.orders.sellOrders.length) {
             $scope.lowestSellOrder = $scope.orders.sellOrders[0].price;
             $scope.type = $scope.orders.type;
-            $scope.sellChart.data = getChartData($scope.orders.sellOrders, 0.0, 0.95);
           }
+          $scope.chartData.data = getChartDataForAll($scope.orders.sellOrders, $scope.orders.buyOrders);
           $scope.loader = false;
-          console.log('', $scope.orders);
         });
 
       $scope.buyFilter = function (item) {
@@ -53,35 +51,36 @@ walleApp.component('orders', {
         $anchorScroll();
       };
 
+      $scope.chartData = {};
+      $scope.chartData.type = "Histogram";
 
-      $scope.sellChart = {};
-      $scope.sellChart.type = "Histogram";
-      $scope.sellChart.data = [
-        ['Label', 'Price']
+      $scope.chartData.options = {
+        title: 'Prices',
+        histogram: { lastBucketPercentile: 2 },
+        hAxis: {slantedText: true}
+      };
+      $scope.chartData.data = [
+        ['Buy Price', 'Sell Price']
       ];
 
-      $scope.sellChart.options = {
-        'title': 'Sell Prices'
-      };
-
-      $scope.buyChart = {};
-      $scope.buyChart.type = "Histogram";
-      $scope.buyChart.data = [
-        ['Label', 'Price']
-      ];
-
-      $scope.buyChart.options = {
-        'title': 'Buy Prices'
-      };
+      getChartDataForAll = function(sellOrders, buyOrders, startPercentile = 0.0, endPercentile = 1.0) {
+        var chartData = [
+           ['Buy Price', 'Sell Price']
+        ];
+        const sellData = this.getChartData(sellOrders, 0.0, 0.98);
+        const buyData = this.getChartData(buyOrders, 0.0, 0.98);
+        sellData.forEach(item => {chartData.push([null, item])});
+        buyData.forEach(item => {chartData.push([item, null])});
+        console.log('chartData = ', chartData);
+        return chartData;
+      }
 
       getChartData = function(orders, startPercentile = 0.0, endPercentile = 1.0) {
-        var chartData = [
-          ['Label', 'Price']
-        ];
+        var chartData = [];
         var startIndex = Math.floor(orders.length * startPercentile);
         var endIndex = Math.floor(orders.length * endPercentile);
         for (var i = startIndex; i < endIndex; i++) {
-          chartData.push(['', orders[i].price]);
+          chartData.push(orders[i].price);
         }
         return chartData;
       }

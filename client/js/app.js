@@ -22,5 +22,8 @@ walleApp.config(function ($routeProvider, $locationProvider) {
     .when("/tradeRoutes", {
       template: "<tradeRoutes></tradeRoutes>"
     })
+    .when("/search", {
+      template: "<search></search>"
+    })
     .otherwise("/main");
 });

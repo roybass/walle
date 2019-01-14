@@ -53,6 +53,14 @@ routesCalc.init().then((routesCalculator) => {
       });
   });
 
+  app.get('/api/search', (req, res) => {
+    const query = req.query.q;
+    const limit = req.query.limit;
+    const offset = req.query.offset;
+    esi.searchType(query, limit, offset).then((results) => {
+      res.json(results);
+    });
+  });
   app.get('/api/orders/:type', (req, res) => {
     orders.findProfitableOrders(req.params['type'])
       .then((ordersResult) => {

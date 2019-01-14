@@ -7,6 +7,10 @@
     width: 200px;
 }
 
+.description-tooltip {
+	width: 500px;	
+}
+
 .buyOrders.table-striped>tbody>tr:nth-child(even) {
 	background-color: #f4fff4;
 }
