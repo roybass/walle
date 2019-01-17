@@ -1,6 +1,5 @@
 const extend = require('extend');
 const trade = require('./server/trade');
-const tradeRoute = require('./server/tradeRoute');
 const orders = require('./server/orders');
 const regions = require('./static/regions');
 const systems = require('./static/systems');
@@ -31,18 +30,6 @@ routesCalc.init().then((routesCalculator) => {
 
   app.get('/api/bestTrades', (req, res)  => {
     trade.findTradesInRegions(constraintsFactory.getConstraints(req), routesCalculator)
-      .then((routes) => {
-        esi.getKills().then((stats) => {
-          res.json(routes.map((t) => {
-            return formatTrade(t, stats);
-          }));
-        });
-
-      });
-  });
-
-  app.get('/api/tradeRoute', (req, res)  => {
-    tradeRoute.findTradesInRoute(constraintsFactory.getConstraintsForTradeRoute(req), routesCalculator)
       .then((routes) => {
         esi.getKills().then((stats) => {
           res.json(routes.map((t) => {
@@ -120,7 +107,7 @@ function formatTrade(t, stats) {
     },
     type: !t.type ? 'N/A' : {
       id: t.typeId,
-      name: t.type.name.en,
+      name: t.type.name,
       volume: t.type.volume
     },
     profit: t.profit,

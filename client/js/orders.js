@@ -1,6 +1,6 @@
 walleApp.component('orders', {
     templateUrl: 'templates/orders.html',
-    controller: function OrdersController($scope, $http, $route, $location, $anchorScroll, $window) {
+    controller: function OrdersController($scope, $http, $route, $window) {
 
       $scope.typeId = $route.current.params['type'] || null;
       $scope.type = {};
@@ -53,9 +53,8 @@ walleApp.component('orders', {
         return moment.duration(difference).humanize();
       };
 
-      $scope.scrollTo = function (place) {
-        $location.hash(place);
-        $anchorScroll();
+      $scope.scrollTo = function (id) {
+          document.getElementById(id).scrollIntoView();
       };
 
       $scope.chartData = {};

@@ -1,5 +1,5 @@
 const crest = require('./crest/esi');
-const sde = require('eve-online-sde');
+const types = require('../static/types');
 const regions = require('../static/regions');
 const stations = require('../static/stations');
 const systems = require('../static/systems');
@@ -8,8 +8,7 @@ const logger = require('../logger');
 class OrdersFinder {
 
   async findProfitableOrders(typeId) {
-    const types = await sde.types();
-    const type = types[typeId];
+    const type = types.findById(typeId);
     if (!type) {
       return {};
     }

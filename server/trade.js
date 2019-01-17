@@ -1,7 +1,8 @@
 const crest = require('./crest/esi');
-const sde = require('eve-online-sde');
+//const sde = require('eve-online-sde');
 const logger = require('../logger');
 const stations = require('../static/stations');
+const types = require('../static/types');
 const systems = require('../static/systems');
 const regions = require('../static/regions');
 const Progress = require('./progress');
@@ -26,10 +27,8 @@ class TradeFinder {
       }
       logger.debug("Added sell orders for %d types", sellOrders.size);
       logger.debug("Added buy orders for %d types", buyOrders.size);
-      return sde.types().then((types) => {
-        return this.findTrades(buyOrders, sellOrders, constraints, types, routesCalculator);
-      });
-
+      
+      return this.findTrades(buyOrders, sellOrders, constraints, routesCalculator);
     });
   }
 
@@ -68,7 +67,7 @@ class TradeFinder {
     ordersArr.push(order);
   }
 
-  async findTrades(buyOrders, sellOrders, constraints, types, routesCalculator) {
+  async findTrades(buyOrders, sellOrders, constraints, routesCalculator) {
     const pairs = new Set();
     const trades = [];
     let all = 0;
@@ -78,7 +77,7 @@ class TradeFinder {
     for (const buyEntry of buyOrders) {
       mainProgress.inc();
       const typeId = buyEntry[0];
-      const type = types[typeId];
+      const type = types.findById(typeId);
       if (!type) {
         continue; // Unknown type
       }
