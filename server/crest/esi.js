@@ -42,7 +42,7 @@ class EsiClient {
 
   async getGroup(groupId) {
     const url = `universe/groups/${encodeURIComponent(groupId)}/?datasource=tranquility&language=en-us`
-    return this.getData(url, consts.WEEK, true).then((response => response.data.name));
+    return this.getData(url, consts.WEEK, true).then((response => response ? response.data.name : ''));
   }
 
   async getAllMarketOrders(regionId, useCache = true) {
